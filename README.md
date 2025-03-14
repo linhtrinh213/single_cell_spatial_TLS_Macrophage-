@@ -13,7 +13,7 @@ this study aims to fill this knowledge gap by utilizing single-cell and spatial 
 - **Single-cell analysis:** 
 - **Spatial analysis:** Macrophage localization patterns near TLS regions.
 ![single_cell_workflow](C:/Users/trinh/Documents/MOBILIFE 2021/7 FS/Bachelorarbeit/BA_git/results/workflow/single_cell_workflow.png)
-![spatial_workflow](C:/Users/trinh/Documents/MOBILIFE 2021/7 FS/Bachelorarbeit/BA_git/results/workflow/spatial_workflow.png)
+![spatial_workflow](C:/Users/trinh/Documents/MOBILIFE 2021/7 FS/Bachelorarbeit/BA_git/results/workflow/spatial_workflow.png) 
 
 
 ## 📈 Results
