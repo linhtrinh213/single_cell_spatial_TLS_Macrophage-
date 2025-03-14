@@ -10,8 +10,11 @@ this study aims to fill this knowledge gap by utilizing single-cell and spatial 
 **Spatial transcriptomics data:** GSE175540 contains 24 spatial transcriptomics samples from clear cell renal cell carcinoma tissues (ccRCC).
 
 ## ⚙️ Methods and Workflow 
-- **Single-cell analysis:** Clustering, differential expression, enrichment analysis.
+- **Single-cell analysis:** 
 - **Spatial analysis:** Macrophage localization patterns near TLS regions.
+![single_cell_workflow](C:/Users/trinh/Documents/MOBILIFE 2021/7 FS/Bachelorarbeit/BA_git/results/workflow/single_cell_workflow.png)
+![spatial_workflow](C:/Users/trinh/Documents/MOBILIFE 2021/7 FS/Bachelorarbeit/BA_git/results/workflow/spatial_workflow.png)
+
 
 ## 📈 Results
 - Key visualizations saved in `results/`
