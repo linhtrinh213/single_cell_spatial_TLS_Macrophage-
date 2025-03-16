@@ -1,0 +1,47 @@
+Project: single_cell_spatial_TLS_Macrophage
+Type: Project
+Title: Single cell and spatial transcriptomics reveal phenotypes of TLS-associated macrophages
+Author: Linh Trinh
+Description: This project aims to phenotype TLS-associated macrophages by utilizing single-cell and spatial technology.
+R-Version: 4.3.0
+Depends:
+    R (>= 4.3.0)
+Imports:
+    Seurat	(5.0.3)
+    SeuratObject	(5.0.1)
+    igraph	(2.0.3)
+    ggplot2	(3.5.0)
+    dplyr	(1.1.4)
+    patchwork	(1.2.0)
+    hdf5r	(1.3.10)
+    tidyverse	(2.0.0)
+    celldex	(1.10.1)
+    SingleR	(2.2.0)
+    Stringr	(1.5.0)
+    VennDiagram	(1.7.3)
+    sctransform	(0.4.1)
+    glmGamPoi	(1.12.1)
+    matrix	(1.6-5)
+    pheatmap	(1.0.12)
+    clusterProfiler	(4.13.0)
+    pathview	(1.40.0)
+    enrichplot	(1.22.0)
+    readxl	(1.4.3)
+    spacexr	(2.2.1)
+    doParallel	(1.0.17)
+    ggrepel	(0.9.5)
+    glmnet	(4.1-8)
+    GO.db	(3.17.0)
+    org.Hs.eg.db	(3.17.0)
+    msigdbr	(7.5.1)
+    psych	(2.4.3)
+    Sp	(2.1-3)
+    tidyr	(1.3.1)
+    reshape2	(1.4.4)
+    DOSE	(3.26.2)
+    fgsea	(1.26.0)
+    gridExtra	(2.3)
+    readr	(2.1.5)
+    rjson	(0.2.21)
+    uwot	(0.1.16)
+    liana	(0.1.12)
