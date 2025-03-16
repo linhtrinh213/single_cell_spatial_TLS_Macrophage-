@@ -22,10 +22,10 @@ this study aims to fill this knowledge gap by utilizing single-cell and spatial 
 - TLS-associated TAMs display an **anti-tumor state**, characterized by a significant downregulation of genes involved in metastasis, tumor progression, and angiogenesis. At the
 same time, phagocytic activity is increased.
 - Lastly, through studying ligand-receptor interactions,**active recruitment** and **migration** of immune cells in TLS regions are observed.
+ 
+![key_findings](results/workflow/keyfindings.svg)  
 
-  
-- Key visualizations saved in `results/` 
-- Differential expression tables for macrophage markers in `results/`
+
 
 ## 🚀 How to Run
 1. Clone the repo:  
