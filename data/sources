@@ -1,0 +1,18 @@
+All of the datasets used in this project are publicly available datasets from Gene Expression Omnibus (GEO).  
+
+# Single-cell transcriptomics datasets
+- GSE186344: all samples from GSE186344 were taken in from the datasets, except for Rhabdomyosarcoma (GSM5645906), Breast_1_Biological_Replicate (GSM5645908), and 2 mouse models samples (GSM5645909 and GSM5645911). 15 samples were included from this study. 
+Link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE186344 
+
+- GSE174401: only brain metastasis samples were included into analysis from GSE174401, those are GSM5293902 to GSM5293915, totalling 14 samples. 
+Link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE174401 
+
+- GSE234832 contains five brain metastasis patients, three of them from breast cancer and two from lung cancer. 
+Link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE234832 
+
+# Spatial transcriptomics datasets 
+- GSE175540: contains 24 spatial transcriptomics samples from clear cell renal cell carcinoma tissues (ccRCC). 
+Link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE175540
+
+- GSE178481: single-cell transcriptomics data utilized as a reference to perform deconvolution. Specifically, three tumor samples from one patient with stage 2 ccRCC were taken from this dataset (GSM392421, GSM392422, GSM392423). 
+Link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE178481 
