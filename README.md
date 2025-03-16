@@ -26,8 +26,3 @@ same time, phagocytic activity is increased.
 ![key_findings](results/workflow/keyfindings.svg)  
 
 
-
-## 🚀 How to Run
-1. Clone the repo:  
-   ```bash
-   git clone https://github.com/YourUsername/Single_Cell_Spatial_TLS_Macrophage.git

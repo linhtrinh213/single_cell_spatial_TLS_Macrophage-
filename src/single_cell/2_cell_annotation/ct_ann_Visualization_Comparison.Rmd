@@ -1,0 +1,403 @@
+---
+title: "ct_ann_final"
+output: html_document
+date: "2024-05-08"
+---
+
+```{r library}
+
+library(tidyverse) # includes ggplot2, for data visualisation. dplyr, for data manipulation.
+library(celldex)
+library(SingleR)
+library(Seurat)
+library (ggplot2)
+library (VennDiagram)#install.packages ("VennDiagram")
+library(eulerr) #install.packages ("eulerr")
+set.seed(0)
+
+```
+
+# Annotation with GSE344 taking too long
+
+Problem: too many cells (76k vs 256 in the other ref) in ref dataset -> 3 approaches 
+
+```{r}
+
+BluePrint = as.data.frame(ct_fine@listData[["pruned.labels"]]) # number of MP in GSE344 (ref) 2828, while with blueprint 3474 MP identified -> makes sense
+
+```
+
+#1 Maybe take only the MP + TLS-related cells. What are those? 
+
+```{r}
+unique(new_row2)
+
+```
+
+#2 In my 100k cells, 76k from GSE344 already been assigned. Subset the other 2 datasets 
+
+```{r}
+
+
+```
+
+#3.1 Taking only a subset cells of each cell types
+
+objectives: GSE344: dgCmatrix, new_row: cell type info
+
+```{r}
+# adding new_row to GSE344
+GSE344@factors = as.vector(new_row)
+
+GSE344_sub = GSE344 [,1:1000] # subsetting 1000 cells 
+GSE344_sub@factors =  as.vector(new_row) [1:1000] # adding cell type info
+write.table (GSE344_sub,"/omics/groups/OE0436/data/Linh/Datasets/Annotation/ref_GSE344_sub" )
+
+# checking how many cells of interest are in this subset of ref 
+new_row_sub = as.data.frame(new_row [1:1000,])
+# 193 Macrophages, 100 B cells (B-c1 and B-c2), 110 cells: T:CD4+:CM1,T:CD4+:CM2,T:CD8+:EM, T:CM, 80 cells Dendritic cells: cDC2:CD1C+/CLEC10A+, 16 Treg,.... 
+
+new_row3 = as.data.frame(new_row [1:1000,])
+
+```
+
+#3.2 Taking only a subset cells of each cell types: random
+
+```{r}
+
+GSE_integrated = readRDS("/omics/groups/OE0436/internal/Linh/results/GSE_integrated")
+
+# GSE_integrated subset for GSE344: 
+
+GSE344 = subset(GSE_integrated, subset = dataset_ID == "GSE186344")
+
+new_row2 = read.table ("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/new_row2")
+GSE344 = AddMetaData(GSE344, as.vector(new_row2)) #adding cell type info
+GSE344 = AddMetaData(GSE344, Cells(GSE344), col.name = "cell_barcode")
+# taking a subset of cells randomly, using subset and sample_int
+set.seed(0) #so that its reproducible 
+GSE344_matrix = GSE344@assays[["SCT"]]@data # extract the normalised count as well as genes and cell barcode
+random_cells = sample(GSE344_matrix@Dimnames[[2]],10000)
+
+GSE344_10k <- GSE344[,random_cells] # GSE344 automatically order it after subsetting 
+
+#generate five random numbers between 1 and 20
+saveRDS (GSE344_10k,"/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344_10k")
+
+```
+
+```{r}
+# Checking cell type distribution 
+
+GSE344_ran_value = GSE344_ran@assays[["SCT"]]@data # extract the dgcmatrix 
+ ()
+celltype = as.data.frame(GSE344_ran@meta.data[["x"]]) #extracting the cell type 
+#cell distribtion: 82 Macrophages, 43 B cells, 175 + 76 T cells, 26 DCs 
+
+```
+
+
+# Result from 3.1
+
+```{r result from #3.1 approach}
+
+ct_ann_GSE344sub = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344sub")
+GSE_integrated@meta.data[["ct_ann_GSE344sub"]] = ct_ann_GSE344sub@listData[["pruned.labels"]] #adding the metadata info 
+
+GSE_integrated <- SetIdent(GSE_integrated, value = "ct_ann_GSE344sub")
+
+# plot UMAP 
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/UMAP_Anno",width = 1000, height = 700) #res =?
+DimPlot(GSE_integrated, label = T , repel = T, label.size = 3) + NoLegend()
+dev.off()
+# plot Heatmap
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/Heatmap",width = 1000, height = 700)
+plotScoreHeatmap(ct_ann_GSE344sub)
+dev.off()
+# plot Delta Distribution
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/DeltaDistribution",width = 1000, height = 700)
+plotDeltaDistribution(ct_ann_GSE344sub, ncol = 4, dots.on.top = FALSE)
+dev.off()
+
+
+```
+
+
+```{r result from #3.2 approach}
+
+#lost while trying to save the session 
+
+ct_ann_GSE344ran = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344ran")
+GSE_integrated@meta.data[["ct_ann_GSE344ran"]] = ct_ann_GSE344ran@listData[["pruned.labels"]] #adding the metadata info 
+
+
+```
+
+```{r result from #3.3 approach}
+
+
+ct_ann_GSE344_10kSingleR = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344_10kSingleR")
+GSE_integrated@meta.data[["ct_ann_GSE344_10kSingleR"]] = ct_ann_GSE344_10kSingleR@listData[["pruned.labels"]] #adding the metadata info 
+
+GSE_integrated <- SetIdent(GSE_integrated, value = "ct_ann_GSE344_10kSingleR")
+
+# plot UMAP 
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/10k_random/UMAP_Anno",width = 1000, height = 700) #res =?
+DimPlot(GSE_integrated, label = T , repel = T, label.size = 3) + NoLegend()
+dev.off()
+# plot Heatmap
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/10k_random/Heatmap",width = 1000, height = 700)
+plotScoreHeatmap(ct_ann_GSE344_10kSingleR)
+dev.off()
+# plot Delta Distribution
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/10k_random/DeltaDistribution",width = 1000, height = 700)
+plotDeltaDistribution(ct_ann_GSE344_10kSingleR, ncol = 4, dots.on.top = FALSE)
+dev.off()
+
+
+
+```
+
+# Venn Diagramm
+
+#1 Should GSE344 be assigned again 
+
+```{r }
+
+# GSE344_celltype that were GIVEN 
+new_row2 = read.table ("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/new_row2")
+
+
+
+```
+
+```{r}
+# GSE344_celltype that were ASSIGNED
+# GSE_integrated subset for GSE344: 
+
+
+# 2000 random 
+ct_ann_GSE344ran = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344ran")
+GSE_integrated = readRDS("/omics/groups/OE0436/internal/Linh/results/GSE_integrated")
+GSE_integrated@meta.data[["ct_ann_GSE344ran"]] = ct_ann_GSE344ran@listData[["pruned.labels"]] #adding the metadata info 
+GSE344 = subset(GSE_integrated, subset = dataset_ID == "GSE186344")
+GSE344_assigned = GSE344@meta.data[["ct_ann_GSE344ran"]]
+
+
+# 1000 non random 
+ct_ann_GSE344sub = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344sub")
+GSE_integrated@meta.data[["ct_ann_GSE344sub"]] = ct_ann_GSE344sub@listData[["pruned.labels"]] #adding the metadata info 
+GSE344 = subset(GSE_integrated, subset = dataset_ID == "GSE186344")
+GSE344_assigned_sub = GSE344@meta.data[["ct_ann_GSE344sub"]]
+
+# 10000 random
+ct_ann_GSE344_10kSingleR = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344_10kSingleR")
+GSE_integrated@meta.data[["ct_ann_GSE344_10kSingleR"]] = ct_ann_GSE344_10kSingleR@listData[["pruned.labels"]] #adding the metadata info 
+GSE344 = subset(GSE_integrated, subset = dataset_ID == "GSE186344")
+GSE344_assigned_10k = GSE344@meta.data[["ct_ann_GSE344_10kSingleR"]]
+
+
+```
+
+```{r Pie chart}
+
+########################### 2000 random 
+overlap_GSE344 = (new_row2[,1]== GSE344_assigned) #creating a logical vector
+match = sum (overlap_GSE344, na.rm = TRUE)# number of matching elements #53927
+non_match_count = sum (overlap_GSE344 == F, na.rm = TRUE) #11920
+NA_count = sum (is.na(overlap_GSE344)) #10824: the number of cells that cell type were not GIVEN. The new_row are NA itself 
+#creating a pie chart
+
+#percentage = c(match,non_match_count,NA_count)
+#percentage <- round(percentage/76671*100)
+#percentage <- paste(percentage,"%",sep="") # ad % to labels
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/GSE186344 cell type given vs. assigned (2k random cells)",width = 1000, height = 700)
+pie(c(match,non_match_count,NA_count), labels = c("Matching", "Non-Matching", "NA"), col= c("skyblue", "lightcoral", "lightgreen"),main = "GSE186344 cell type given vs. assigned (2k random cells)") 
+dev.off()
+
+# 1000 non random
+overlap_GSE344_sub =  (new_row2[,1]== GSE344_assigned_sub)
+match = sum (overlap_GSE344_sub == "TRUE", na.rm = TRUE) #36884
+non_match_count = sum (overlap_GSE344_sub == "FALSE", na.rm = TRUE) #28994
+NA_count = sum (is.na(overlap_GSE344_sub)) #10793: the number of cells that cell type were not GIVEN
+
+
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/GSE186344 cell type given vs. assigned (1k cells)",width = 1000, height = 700)
+pie(c(match,non_match_count,NA_count), labels = c("Matching", "Non-Matching", "NA"), col= c("skyblue", "lightcoral", "lightgreen"),main = "GSE186344 cell type given vs. assigned (1k cells)") 
+dev.off()
+
+# 10000 random
+overlap_GSE344 = (new_row2[,1] == GSE344_assigned_10k) #creating a logical vector 
+match = sum(overlap_GSE344, na.rm = TRUE)# number of matching elements 54255
+non_match_count = sum (overlap_GSE344 == F, na.rm = TRUE)#11423
+NA_count = sum (is.na(overlap_GSE344)) #10993: the number of cells that cell type were not GIVEN. The new_row are NA itself 
+
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/GSE186344 cell type given vs. assigned (10k cells).png",width = 1000, height = 700)
+pie(c(match,non_match_count,NA_count), labels = c("Matching", "Non-Matching", "NA"), col= c("skyblue", "lightcoral", "lightgreen"),main = "GSE186344 cell type given vs. assigned (10k cells)") 
+dev.off()
+
+```
+# 2 Comparing 3 ref datasets from GSE344 and the given annotation
+
+```{r}
+# define 4 vectors: 1. given: new_row2 2. GSE344_assigned_10k 3.GSE344_assigned_sub (1k) 4. GSE344_assigned (2k)
+one = new_row2
+two = GSE344_assigned_10k 
+three = GSE344_assigned_sub
+four = GSE344_assigned
+# calculating area of overlaps
+
+n12 = (sum ((one== two)== T, na.rm = T)/ 76671)*100 # length of vector -> get %
+n23 = (sum ((two== three)== T, na.rm = T)/ 76671)*100
+n13 = (sum ((one== three)== T, na.rm = T)/ 76671)*100
+n14 = (sum ((one== four)== T, na.rm = T)/ 76671)*100
+n24 = (sum ((two== four)== T, na.rm = T)/ 76671)*100
+n34 = (sum ((three== four)== T, na.rm = T)/ 76671)*100
+n123 = (length (which(one== two & two == three))/ 76671)*100
+n124 = (length (which(one== two & two == four))/ 76671)*100
+n234 = (length (which(two== three & three == four))/ 76671)*100
+n134 = (length (which(one== three & three == four))/ 76671)*100
+n1234 = (length (which(one== two & two== three & three == four)))*100/ 76671
+
+n12 = as.integer (n12)
+n23 = as.integer (n23)
+n13 = as.integer (n13)
+n14 = as.integer (n14)
+n24 = as.integer (n24)
+n34 = as.integer (n34)
+n123 = as.integer (n123)
+n124 = as.integer (n124)
+n134 = as.integer (n134)
+n234 = as.integer (n134)
+n1234 = as.integer (n1234)
+
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/Venn_4refGSE344",width = 1000, height = 700) #res =?
+grid.newpage()
+draw.quad.venn (area1 = 100, area2 = 100, area3  = 100, area4 = 100, n12 = n12, n13 = n13, n23 = n23, n14 = n14, n24 = n24,n34 =n34,  n123 =n123, n124 =n124,n234 =n234, n134 =n134, n1234= n1234, category = c("given","1k_nonrandom","2k", "10k"), fill =c("skyblue", "lightcoral", "lightgreen","lightyellow"))
+dev.off()
+
+# using euler
+
+#specify values to use in venn diagram
+fit <- euler(c(area1 = 100, area2 = 100, area3  = 100, area4 = 100, n12 = n12, n13 = n13, n23 = n23, n14 = n14, n24 = n24,n34 =n34,  n123 =n123, n124 =n124,n234 =n234, n134 =n134, n1234= n1234))
+
+#create venn diagram with custom colors
+plot(fit, fill=c("skyblue", "lightcoral", "lightgreen","lightyellow")) 
+```
+
+
+
+# Comparing 4 ref datasets
+
+- Compare for all cells: not very feasible since cell type names are different
+=> Compare for MP,B,T,DC
+
+```{r Importing the cell type infos }
+ct_ann_THCA  = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann.rds")
+ct_ann_main_BluePrint = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_main_BluePrint")
+ct_ann_GSE344_10kSingleR  =  readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344_10kSingleR")
+```
+
+
+```{r Adding cell type annotation to GSE_integrated}
+
+GSE_integrated@meta.data[["ct_ann_GSE344_10kSingleR"]] = ct_ann_GSE344_10kSingleR@listData[["pruned.labels"]] #adding the metadata info 
+GSE_integrated@meta.data[["ct_ann_main_BluePrint"]] = ct_ann_main_BluePrint@listData[["pruned.labels"]] #adding the metadata info 
+GSE_integrated@meta.data[["ct_ann_THCA"]] = ct_ann_THCA[,"pruned.labels"] #adding the metadata info 
+
+
+#saveRDS (GSE_integrated)
+```
+
+```{r Susetting for cell type (MP, T, B, DC)}
+
+# for BluePrint: "Macrophages", c("CD4+ T-cells", "CD8+ T-cells"), "B-cells", "DC"
+# for TGCA: "Macrophage", "T_cells", "B_cell", "DC"
+# for MP: contain c("MAMs:APOE+", "MAMs:S100A8+"),c("T:CD4+:CM1", "T:CD8+:EM","Treg", "T:CD4+:CM2","T:CM"),c("B-c2","B-c1"),"cDC2:CD1C+/CLEC10A+"
+# for tumor cells:  "MTCs"     
+
+# define the names of the cells 
+BluePrint_MP =  "Macrophages"
+BluePrint_T =  c("CD4+ T-cells", "CD8+ T-cells")
+BluePrint_B =  "B-cells"
+BluePrint_DC = "DC"
+
+GSE344_MP = c("MAMs:APOE+", "MAMs:S100A8+")
+GSE344_T =  c("T:CD4+:CM1", "T:CD8+:EM","Treg", "T:CD4+:CM2","T:CM")
+GSE344_B =  c("B-c2","B-c1")
+GSE344_DC = "cDC2:CD1C+/CLEC10A+"
+
+TGCA_MP ="Macrophage" 
+TGCA_T =  "T_cells"
+TGCA_B =  "B_cell"
+TGCA_DC = "DC"
+
+# subsetting the according cell populations
+BluePrint_MP =  subset (GSE_integrated, subset = ct_ann_main_BluePrint == BluePrint_MP)
+BluePrint_T = subset (GSE_integrated, subset = ct_ann_main_BluePrint == BluePrint_T)
+BluePrint_B =  subset (GSE_integrated, subset = ct_ann_main_BluePrint == BluePrint_B)
+BluePrint_DC = subset (GSE_integrated, subset = ct_ann_main_BluePrint == BluePrint_DC)
+
+GSE344_MP = subset (GSE_integrated, subset = ct_ann_GSE344_10kSingleR == GSE344_MP)
+GSE344_T =  subset (GSE_integrated, subset = ct_ann_GSE344_10kSingleR == GSE344_T)
+GSE344_B =  subset (GSE_integrated, subset = ct_ann_GSE344_10kSingleR == GSE344_B)
+GSE344_DC = subset (GSE_integrated, subset = ct_ann_GSE344_10kSingleR == GSE344_DC)
+
+TGCA_MP = subset (GSE_integrated, subset = ct_ann_THCA == TGCA_MP)
+TGCA_T =  subset (GSE_integrated, subset = ct_ann_THCA == TGCA_T)
+TGCA_B =  subset (GSE_integrated, subset = ct_ann_THCA == TGCA_B)
+TGCA_DC = subset (GSE_integrated, subset = ct_ann_THCA == TGCA_DC)
+
+```
+
+```{r Extract cell barcode}
+BluePrint_MP =  Cells (BluePrint_MP)
+BluePrint_T =   Cells (BluePrint_T)
+BluePrint_B =   Cells (BluePrint_B)
+BluePrint_DC =  Cells (BluePrint_DC)
+
+GSE344_MP = Cells (GSE344_MP)
+GSE344_T =   Cells (GSE344_T)
+GSE344_B =   Cells (GSE344_B)
+GSE344_DC =  Cells (GSE344_DC)
+
+TGCA_MP =  Cells (TGCA_MP)
+TGCA_T =   Cells (TGCA_T)
+TGCA_B =   Cells (TGCA_B)
+TGCA_DC =  Cells (TGCA_DC)
+```
+
+```{r Venn diagram for overlap}
+ ############################ MP 
+#specify values to use in venn diagram
+fit <- euler(c('BluePrint_MP' = length(BluePrint_MP), 'GSE344_MP' = length(GSE344_MP), "TGCA_MP" = length(TGCA_MP), 'BluePrint_MP&GSE344_MP' = length(intersect(BluePrint_MP, GSE344_MP)), 'GSE344_MP&TGCA_MP' = length(intersect(GSE344_MP, TGCA_MP)),'BluePrint_MP&TGCA_MP' = length(intersect(BluePrint_MP,TGCA_MP)), 'BluePrint_MP&GSE344_MP&TGCA_MP' =  length(intersect(intersect(BluePrint_MP,GSE344_MP),TGCA_MP))))
+#create venn diagram with custom colors
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/MP_Overlap",width = 1000, height = 700) #res =?
+plot(fit, fill=c("skyblue", "lightcoral", "lightgreen"),quantities = TRUE, shape = "ellipse") 
+dev.off()
+
+
+ ############################ T 
+fit <- euler(c('BluePrint_T' = length(BluePrint_T), 'GSE344_T' = length(GSE344_T), "TGCA_T" = length(TGCA_T), 'BluePrint_T&GSE344_T' = length(intersect(BluePrint_T, GSE344_T)), 'GSE344_T&TGCA_T' = length(intersect(GSE344_T, TGCA_T)),'BluePrint_T&TGCA_T' = length(intersect(BluePrint_T,TGCA_T)), 'BluePrint_T&GSE344_T&TGCA_T' = length(intersect(intersect(BluePrint_T,GSE344_T),TGCA_T))))
+#create venn diagram with custom colors
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/T_Overlap",width = 1000, height = 700) #res =?
+plot(fit, fill=c("skyblue", "lightcoral", "lightgreen"),quantities = TRUE, shape = "ellipse") 
+dev.off()
+
+ ############################ B 
+fit <- euler(c('BluePrint_B' = length(BluePrint_B), 'GSE344_B' = length(GSE344_B), "TGCA_B" = length(TGCA_B), 'BluePrint_B&GSE344_B' = length(intersect(BluePrint_B, GSE344_B)), 'GSE344_B&TGCA_B' = length(intersect(GSE344_B, TGCA_B)),'BluePrint_B&TGCA_B' = length(intersect(BluePrint_B,TGCA_B)), 'BluePrint_B&GSE344_B&TGCA_B' = length(intersect(intersect(BluePrint_B,GSE344_B),TGCA_B))))
+#create venn diagram with custom colors
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/B_Overlap",width = 1000, height = 700) #res =?
+plot(fit, fill=c("skyblue", "lightcoral", "lightgreen"),quantities = TRUE, shape = "ellipse") 
+dev.off()
+
+
+ ############################ DC
+fit <- euler(c('BluePrint_DC' = length(BluePrint_DC), 'GSE344_DC' = length(GSE344_DC), "TGCA_DC" = length(TGCA_DC), 'BluePrint_DC&GSE344_DC' = length(intersect(BluePrint_DC, GSE344_DC)), 'GSE344_DC&TGCA_DC' = length(intersect(GSE344_DC, TGCA_DC)),'BluePrint_DC&TGCA_DC' = length(intersect(BluePrint_DC,TGCA_DC)), 'BluePrint_DC&GSE344_DC&TGCA_DC' = length(intersect(intersect(BluePrint_DC,GSE344_DC),TGCA_DC))))
+#create venn diagram with custom colors
+png ("/omics/groups/OE0436/data/Linh/Output/Annotation/GSE186344/DC_Overlap",width = 1000, height = 700) #res =?
+plot(fit, fill=c("skyblue", "lightcoral", "lightgreen"),quantities = TRUE, shape = "ellipse") 
+dev.off()
+
+```
+

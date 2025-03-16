@@ -1,0 +1,271 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-07-27"
+---
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(magrittr)
+library(liana)
+library(Seurat)
+library(patchwork)
+library(dplyr)
+```
+
+# Load objects
+
+```{r}
+
+liana_test_TLS = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_TLS_LIANA")
+
+#äliana_test_noTLS = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_domcell_LIANA_NOTLS")
+
+```
+
+
+# Plot for only 1 sample
+```{r}
+TLS = liana_test_TLS %>%
+  liana_dotplot(source_groups = c("TLS"),
+                target_groups = c( "TLS"),
+                ntop = 30)
+
+#liana_aggregate(liana_test_TLS, method=c("natmi"))
+
+NO_TLS = liana_test_TLS %>%
+  liana_dotplot(source_groups = c("NO_TLS"),
+                target_groups = c( "NO_TLS"),
+                ntop = 30)
+
+combine_plot = wrap_plots(TLS, NO_TLS)
+```
+
+# Divide the samples into groups
+
+```{r}
+sample_names = names(liana_results_list)
+print(sample_names)
+TLS_high = c("GSM5924030" ,"GSM5924031" ,"GSM5924032" ,"GSM5924033" , "GSM5924037", "GSM5924038" , "GSM5924041", "GSM5924046" ,"GSM5924049") #12 samples 
+
+TLS_med = c("GSM5924035" ,"GSM5924039" ,"GSM5924040","GSM5924051")
+
+TLS_low = c("GSM5924050", "GSM5924052" ,"GSM5924053")
+```
+
+
+
+# Dot plot for each group 
+
+```{r}
+# Initialize a list to store the plots for the selected samples
+plots_list <- list()
+
+# Loop over each result in liana_results_list
+for (i in seq_along(liana_results_list)) {
+  # Check if the result corresponds to any sample in TLS_high
+  if (any(names(liana_results_list[i]) %in% TLS_high)) {
+    # If it does, create a dot plot
+    plot <- liana_results_list[[i]] %>%
+      liana_dotplot(source_groups = c("TLS"),
+                    target_groups = c("TLS"),
+                    ntop = 20) + 
+        ggtitle(names(liana_results_list[i]) )
+    # Add the plot to the list
+    plots_list[[i]] <- plot
+  }
+}
+
+plots_list <- Filter(Negate(is.null), plots_list)
+
+names (plots_list) = TLS_high
+combine_plot = wrap_plots(plots_list, ncol = 3)
+# Display the combined plot
+print(combine_plot)
+
+```
+
+# Heatmap
+```{r}
+
+# List of interactions to analyze
+interactions <- list(
+  list(ligand = 'CCL19', receptor = 'CCR7'),
+  list(ligand = 'CCL21', receptor = 'CCR7'),
+  list(ligand = 'CXCL13', receptor = 'CXCR5'),
+  list(ligand = 'CXCL12', receptor = 'CXCR4'),
+  list(ligand = 'CCL3', receptor = 'CCR5'),
+  list(ligand = 'CCL4', receptor = 'CCR5'),
+  list(ligand = 'CXCL9', receptor = 'CXCR3'),
+  list(ligand = 'CXCL10', receptor = 'CXCR3'),
+  list(ligand = 'CCL2', receptor = 'CCR2'),
+  list(ligand = 'CCL20', receptor = 'CCR6'),
+  list(ligand = 'CXCL11', receptor = 'CXCR3'),
+  list(ligand = 'CXCL16', receptor = 'CXCR6'),
+  list(ligand = 'CCL22', receptor = 'CCR4'),
+  list(ligand = 'CCL17', receptor = 'CCR4'),
+  list(ligand = 'CXCL2', receptor = 'CXCR2'),
+  list(ligand = 'CXCL8', receptor = 'CXCR1'),
+  list(ligand = 'CXCL8', receptor = 'CXCR2'),
+  list(ligand = 'CXCL4', receptor = 'CXCR3')
+  
+)
+
+```
+## Caculating the score
+
+```{r}
+
+results_df =data.frame()
+for (interaction in interactions) {
+  ligand <- interaction$ligand
+  receptor <- interaction$receptor
+  interaction_name <- paste(ligand, receptor, sep = "_")
+  
+  # Initialize a vector to store results for the current interaction across all samples
+  interaction_results <- c()
+  
+  for (sample_name in names(liana_results_list)) {
+    # Get the data for the current sample
+    data <- liana_results_list[[sample_name]]
+    
+    # Filter for the interaction where source and target are 'TLS' and the ligand-receptor pair matches
+    filtered_data <- data %>%
+      filter(source == 'TLS', target == 'TLS',
+             ligand.complex == ligand, receptor.complex == receptor)
+    
+    # Extract the aggregate_rank and add it to the interaction results
+    if (nrow(filtered_data) > 0) {
+      interaction_results <- c(interaction_results, filtered_data$aggregate_rank)
+    } else {
+      interaction_results <- c(interaction_results, NA)
+    }
+  }
+  
+  # Add the interaction results to the results_df dataframe
+  results_df <- rbind(results_df, data.frame(t(interaction_results)))
+  rownames(results_df)[nrow(results_df)] <- interaction_name
+}
+
+colnames(results_df) <- names(liana_results_list)
+
+```
+
+
+
+```{r}
+# Load required package
+library(pheatmap)
+
+# Ensure results_df has appropriate rownames and colnames
+# This step is just a safety measure; assume `results_df` already has correct rownames and colnames.
+rownames(results_df) <- make.names(rownames(results_df), unique = TRUE)
+colnames(results_df) <- names(liana_results_list)
+
+# Replace NA values with a high number to represent insignificance
+# This can be adjusted depending on the data; the idea is to make NAs less visible
+results_df[is.na(results_df)] <- max(results_df, na.rm = TRUE) + 1
+
+# Convert results to a numeric matrix
+results_matrix <- as.matrix(results_df)
+
+# Create the heatmap
+pheatmap(results_matrix, 
+         cluster_rows = TRUE,  # Cluster rows
+         cluster_cols = TRUE,  # Cluster columns
+         color = colorRampPalette(c("red", "yellow", "green"))(100), # Color palette
+         display_numbers = TRUE, # Show values on the heatmap
+         fontsize_number = 8,    # Font size for numbers
+         main = "Interaction Heatmap", # Title of the heatmap
+         border_color = NA)      # Remove borders around cells
+
+```
+
+```{r}
+
+# Create an annotation for the samples
+annotation_col <- data.frame(
+  TLS_Level = c(rep("High", length(TLS_high)), 
+                rep("Medium", length(TLS_med)), 
+                rep("Low", length(TLS_low))),
+  row.names = c(TLS_high, TLS_med, TLS_low)
+)
+
+# Ensure results_df has appropriate rownames and colnames
+rownames(results_df) <- make.names(rownames(results_df), unique = TRUE)
+colnames(results_df) <- c(TLS_high, TLS_med, TLS_low)
+
+# Replace NA values with a high number to represent insignificance
+results_df[is.na(results_df)] <- max(results_df, na.rm = TRUE) + 1
+
+# Convert results to a numeric matrix
+results_matrix <- as.matrix(results_df)
+
+# Define colors for the TLS_Level annotations
+annotation_colors <- list(
+  TLS_Level = c(High = "red", Medium = "yellow", Low = "blue")
+)
+
+# Create the heatmap with annotations
+pheatmap(results_matrix, 
+         cluster_rows = TRUE,  # Cluster rows
+         cluster_cols = TRUE,  # Cluster columns
+         color = colorRampPalette(c("red", "yellow", "green"))(100), # Color palette
+         display_numbers = TRUE, # Show values on the heatmap
+         fontsize_number = 8,    # Font size for numbers
+         main = "Interaction Heatmap", # Title of the heatmap
+         border_color = NA,      # Remove borders around cells
+         annotation_col = annotation_col, # Add annotations
+         annotation_colors = annotation_colors) # Colors for annotations
+```
+
+
+
+```{r}
+# Load required package
+library(pheatmap)
+
+# Define the sample groups
+TLS_high <- c("GSM5924030" ,"GSM5924031" ,"GSM5924032" ,"GSM5924033" , "GSM5924037", "GSM5924038" , "GSM5924041", "GSM5924046" ,"GSM5924049")
+TLS_med <- c("GSM5924035" ,"GSM5924039" ,"GSM5924040","GSM5924051")
+TLS_low <- c("GSM5924050", "GSM5924052" ,"GSM5924053")
+
+# Order the columns in results_df to cluster samples by TLS level
+ordered_columns <- c(TLS_high, TLS_med, TLS_low)
+results_df <- results_df[, ordered_columns]
+
+# Create an annotation for the samples
+annotation_col <- data.frame(
+  TLS_Level = c(rep("High", length(TLS_high)), 
+                rep("Medium", length(TLS_med)), 
+                rep("Low", length(TLS_low))),
+  row.names = ordered_columns
+)
+
+# Replace NA values with a high number to represent insignificance
+results_df[is.na(results_df)] <- 2#+ 10000
+
+# Convert results to a numeric matrix
+results_matrix <- as.matrix(results_df)
+# Define colors for the TLS_Level annotations
+annotation_colors <- list(
+  TLS_Level = c(High = "red", Medium = "yellow", Low = "blue")
+)
+
+# Create the heatmap with annotations
+pheatmap(mat  = log2(results_matrix), 
+         cluster_rows = F,  # Cluster rows
+         cluster_cols = F,  # Do not cluster columns
+         scale = "none",
+        color = colorRampPalette(c("darkorange", "yellow", "navy"))(100), # Color palette
+        #          color             = inferno(10),
+       #  display_numbers = TRUE, # Show values on the heatmap
+        # fontsize_number = 8,    # Font size for numbers
+         main = "Interaction Heatmap", # Title of the heatmap
+         border_color = NA,      # Remove borders around cells
+         annotation_col = annotation_col, # Add annotations
+         annotation_colors = annotation_colors) # Colors for annotations
+
+```
+

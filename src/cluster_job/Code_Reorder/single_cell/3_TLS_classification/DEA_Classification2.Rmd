@@ -1,0 +1,267 @@
+---
+title: "DEA_Classification2"
+output: html_document
+date: "2024-05-17"
+---
+
+
+The patients will be classified into different groups first using TLS signatures genes and TLS-related cells (MP, T, B, DC) and the present of those cells 
+
+
+```{r library}
+
+library(Seurat)
+#library(leiden)
+#library(leidenAlg)
+library(ggplot2)
+#library(sctransform)
+#library(scDblFinder)
+#library(SingleCellExperiment)
+#library("viridis")
+#library(knitr)
+library(dplyr)
+#library(readxl)
+#library(SingleR)
+#library(celldex)
+library(ggplot2)
+library(patchwork)
+#library ("harmony")
+library (hdf5r)
+
+```
+
+
+
+# Loading objects 
+
+GSE_merge was created in DEA_Classification
+
+```{r}
+readRDS(GSE_merge,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
+saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") #only immune cells, around 25k. Saved 13.05 - run second time
+celltype = readRDS( "/omics/groups/OE0436/data/Linh/Datasets/DEA/cell_type")
+
+saveRDS(GSE_rest2, "/omics/groups/OE0436/data/Linh/Datasets/DEA/GSE_rest2") #only samples that passed the threshold for cell numbers
+saveRDS (geometric_means, "/omics/groups/OE0436/data/Linh/Datasets/DEA/TLS_score_allcells")
+
+```
+
+# Importing datasets
+
+```{r Import core signatures}
+tls_core_signature <- c("CCL2","CCL3","CCL4","CCL5","CCL8","CCL18","CCL19","CCL21","CXCL9","CXCL10","CXCL11","CXCL12", "CXCL13","CD79B", 
+"CETP","LAT", "CD1D", "PTGDS","CXCR5","SELL","ICOS","SH2D1A","TIGIT","PDCD1",                 
+"BANK1","CD22","CD79A","CR1","FCRL2", "MS4A1", "FCER2", "LAMP3","CD86","CD80","CD83","CCR7")
+
+```
+
+# 1. Level of classification: check for present of B,T,and DC cells
+
+patient_list = each element is a sparse matrix contains normalised data for TLS signature for a patient
+patient_list was created in DEA_Classification
+
+celltype: dataframe contains number of cell types for each patients
+
+```{r}
+# Calculate the percentage of B_cells and T cells  for each row
+celltype$Total_Count <- rowSums(celltype)
+celltype$B_Percentage <- celltype$B_count / celltype$Total_Count * 100
+celltype$T_Percentage <- celltype$T_cells_count / celltype$Total_Count * 100
+
+# Find the rownames where the B cells percentage is less than 3 %
+TLS_rest <- rownames(celltype[celltype$B_Percentage > 1.5 & celltype$T_Percentage > 3 & celltype$DC_count > 0, ]) #10 samples that pass this threshold 
+
+TLSneg_NC = setdiff(rownames(celltype) , TLS_rest) # 23 samples 
+
+# subsetting the samples to calculate TLS score
+GSE_list = list()
+for (TLS in TLS_rest) {
+  GSE_list [[TLS]] = subset (GSE_merge, subset = sample_ID == TLS)  # Warning: Removing 498 cells missing data for vars requested Warning: longer object length is not a multiple of shorter object length
+}
+
+GSE_rest2 = merge(GSE_list[[1]],c(GSE_list[[2]],GSE_list[[3]],GSE_list[[4]],GSE_list[[5]],GSE_list[[6]],GSE_list[[7]],GSE_list[[8]],GSE_list[[9]],GSE_list[[10]]))
+
+
+#rm (GSE_list) # to free memory
+# Join layers
+GSE_rest2@assays[["RNA"]] = JoinLayers(GSE_rest2@assays[["RNA"]]) #GSE_rest2: 25k cells 
+saveRDS(GSE_rest2, "/omics/groups/OE0436/data/Linh/Datasets/DEA/GSE_rest2") #only immune cells, around 25k. Saved 13.05 - run second time
+
+```
+
+
+# 2. Level of classification: check for TLS scores using TLS-related cells
+
+```{r}
+
+# subsetting for a group of cells for classifcation 
+cell_sub = c("MAMs:APOE+", "MAMs:S100A8+","T:CD4+:CM1", "T:CD8+:EM","Treg", "T:CD4+:CM2","T:CM", "B-c2","B-c1", "cDC2:CD1C+/CLEC10A+")
+
+GSE_list = list()
+GSE_sub = subset (GSE_rest2, subset = ct_ann_GSE344_10kSingleR == "MAMs:APOE+")  #initalize GSE_sub, otherwise wont work
+for (i in 2:length(cell_sub)) {
+  GSE_list [[i]] = subset (GSE_rest2, subset = ct_ann_GSE344_10kSingleR == cell_sub[i])  # Warning: Removing 143 cells missing data for vars requested Warning: longer object length is not a multiple of shorter object length
+  GSE_sub = merge(GSE_sub, GSE_list[[i]])
+}
+
+#rm (GSE_list) # to free memory
+# Join layers
+GSE_sub@assays[["RNA"]] = JoinLayers(GSE_sub@assays[["RNA"]]) #merge layers
+
+# number of cells 
+length(Cells(GSE_sub)) #14269 vs 25k cells (50%)
+
+```
+
+## Creating list of patients
+ 
+At the end I get a list of patients, each element is a sparse matrix contains normalised data for TLS signature for a patient
+
+```{r }
+patients = unique (GSE_sub@meta.data[["sample_ID"]])
+patient_list = list ()
+
+for (i in 1:length(patients)){
+  seurat_patient = subset (GSE_sub, subset = sample_ID == patients [i]) 
+  matrix_patient = seurat_patient@assays[["RNA"]]@layers[["data"]] # extracting dgcmatrix (matrix patient contain norm data for each patient)
+  matrix_patient@Dimnames[[1]] = Features(seurat_patient)  # give genes name
+  matrix_patient@Dimnames[[2]] = Cells(seurat_patient) # give cell barcode
+  matrix_patient  = matrix_patient [tls_core_signature, ] # subsetting for TLS signatures
+  
+  patient_list[[patients[i]]] = matrix_patient  #adding to a list
+}
+#saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") 
+#patient_list = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list")
+```
+
+## Calculating mean for each patients
+
+```{r}
+
+for (i in 1:length(patient_list)) {
+  mean = rowMeans (patient_list [[i]]) #calculating the mean
+  patient_list [[i]] = mean
+}
+```
+
+## Merge all patients into one dataframe 
+```{r}
+patient_df = do.call(cbind,lapply(patient_list, as.data.frame)) # do.call(): call a function with a list of arguments. Useful when: have a list of arguments (stored as a list) and want to pass a func to it. lapply () take 2 arguments: the list or vector to apply func to and the func to apply. Short for list apply. lapply and sapply: lapply always return a list
+colnames(patient_df) = patients
+```
+
+
+## Calculating TLS score 
+calculating the geometric mean value as TLS score
+
+```{r}
+
+library(psych)
+patient_df_try = patient_df*1000
+patient_df_try = patient_df_try + 1 #to handle 0 values
+
+geometric_means <- apply(patient_df_try, 2, geometric.mean) #2: columns # alot of 0 initially 
+
+geometric_means 
+# TLSneg = GSE174401_904 GSE186344_898 GSE174401_915 GSE234832_324 GSE174401_912
+# TLSpos = GSE186344_888, 890, 896, GSE186344_902, GSE174401_909
+```
+
+```{r}
+
+# extracting the patients ID 
+patient_ID = names(geometric_means)
+geometric_means = as.data.frame(geometric_means)
+geometric_means = cbind (geometric_means, rownames(geometric_means))
+colnames(geometric_means) = c("score", "patients")
+
+score_only = geometric_means$score
+geometric_means$score = as.numeric(geometric_means$score)
+#boxplot (as.numeric(score_only)) 
+#points(as.numeric(score_only))
+
+png ("/omics/groups/OE0436/data/Linh/Output/DEA/TLS_Score_subset2.png",width = 700, height = 1000)
+ggplot(geometric_means, aes(x = "Patient_ID",y = as.numeric(score))) + geom_boxplot(fill = "transparent") + geom_point(color="blue", size= 2 , alpha=0.9) + labs(titel="TLS Signature Scores", y = "Scores")
+dev.off()
+
+```
+
+
+# 3. Level of classification: check for TLS scores using all cells
+
+## Creating list of patients
+ 
+At the end I get a list of patients, each element is a sparse matrix contains normalised data for TLS signature for a patient
+
+```{r }
+patients = unique (GSE_rest2@meta.data[["sample_ID"]])
+patient_list = list ()
+
+for (i in 1:length(patients)){
+  seurat_patient = subset (GSE_rest2, subset = sample_ID == patients [i]) 
+  matrix_patient = seurat_patient@assays[["RNA"]]@layers[["data"]] # extracting dgcmatrix (matrix patient contain norm data for each patient)
+  matrix_patient@Dimnames[[1]] = Features(seurat_patient)  # give genes name
+  matrix_patient@Dimnames[[2]] = Cells(seurat_patient) # give cell barcode
+  matrix_patient  = matrix_patient [tls_core_signature, ] # subsetting for TLS signatures
+  
+  patient_list[[patients[i]]] = matrix_patient  #adding to a list
+}
+#saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") 
+#patient_list = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list")
+```
+
+## Calculating mean for each patients
+
+```{r}
+
+for (i in 1:length(patient_list)) {
+  mean = rowMeans (patient_list [[i]]) #calculating the mean
+  patient_list [[i]] = mean
+}
+```
+
+## Merge all patients into one dataframe 
+```{r}
+patient_df = do.call(cbind,lapply(patient_list, as.data.frame)) # do.call(): call a function with a list of arguments. Useful when: have a list of arguments (stored as a list) and want to pass a func to it. lapply () take 2 arguments: the list or vector to apply func to and the func to apply. Short for list apply. lapply and sapply: lapply always return a list
+colnames(patient_df) = patients
+```
+
+
+## Calculating TLS score 
+calculating the geometric mean value as TLS score
+
+```{r}
+
+library(psych)
+patient_df_try = patient_df*1000
+patient_df_try = patient_df_try + 1 #to handle 0 values
+
+geo_mean_manually = exp(mean(log(patient_df_try$GSE186344_888))) #geo_mean_manually [1] 109.2226 for 888 -> same value 
+
+
+geometric_means <- apply(patient_df_try, 2, geometric.mean) #2: columns # alot of 0 initially 
+
+geometric_means 
+saveRDS (geometric_means, "/omics/groups/OE0436/data/Linh/Datasets/DEA/TLS_score_allcells")
+# TLSneg = GSE174401_904 GSE186344_898 GSE174401_915 GSE234832_324 GSE174401_912 (GSE186344_902 changed quite a lot, 20 scores)
+```
+
+```{r}
+
+# extracting the patients ID 
+patient_ID = names(geometric_means)
+geometric_means = as.data.frame(geometric_means)
+geometric_means = cbind (geometric_means, rownames(geometric_means))
+colnames(geometric_means) = c("score", "patients")
+
+score_only = geometric_means$score
+geometric_means$score = as.numeric(geometric_means$score)
+#boxplot (as.numeric(score_only)) 
+#points(as.numeric(score_only))
+
+png ("/omics/groups/OE0436/data/Linh/Output/DEA/TLS_Score_2.png",width = 700, height = 1000)
+ggplot(geometric_means, aes(x = "Patient_ID",y = as.numeric(score))) + geom_boxplot(fill = "transparent") + geom_point(color="blue", size= 2 , alpha=0.9) + labs(titel="TLS Signature Scores", y = "Scores")
+dev.off()
+
+```
+

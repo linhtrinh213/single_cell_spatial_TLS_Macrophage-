@@ -1,0 +1,338 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+remotes::install_github("GuangchuangYu/clusterProfiler") #had to remove.packages("GOSemSim", lib="~/R/x86_64-pc-linux-gnu-library/4.3")
+
+BiocManager::install("pathview")
+BiocManager::install("enrichplot")
+library(clusterProfiler)
+library(enrichplot)
+# we use ggplot2 to add x axis labels (ex: ridgeplot)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r loading objects}
+
+filtered_genes_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0) (from ST_Import_allsample.Rmd)
+
+```
+
+```{r Calculating mean log foldchange}
+
+combined_genes <- bind_rows(filtered_genes_list, .id = "sample_id") 
+
+# Calculate mean values grouped by gene_name
+final_df <- combined_genes %>%
+  group_by(gene_name) %>%
+  summarise(
+    mean_p_val = mean(as.numeric(p_val), na.rm = TRUE),
+    mean_log_fc = mean(log_fc, na.rm = TRUE))
+
+# mean: if gene only appears in 4 samples -> divide only by 4 and not 16
+########################################### Conclusion on joint value: p val of LYZ and SPP1 not even significant. But for GSEA only need log fc (mean still ok)
+```
+
+## Annotation
+
+```{r}
+# SET THE DESIRED ORGANISM HERE
+organism = "org.Hs.eg.db" #homo sapiens
+BiocManager::install(organism, character.only = TRUE)
+library(organism, character.only = TRUE)
+
+```
+## Preparing input
+
+```{r}
+# we want log2 fc 
+original_gene_list <- final_df$mean_log_fc
+names(original_gene_list) <- final_df$gene_name
+
+# sort the list in decreasing order (required for clusterProfiler)
+original_gene_list = sort(original_gene_list, decreasing = TRUE)
+```
+
+## GSEA (Gene ontology)
+```{r}
+
+gse <- gseGO(geneList=original_gene_list, 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+          #   nPerm = 10000, # remove nPerm bc Warning: You are trying to run fgseaSimple. It is recommended to use fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument in the fgsea function call.no term enriched under specific pvalueCutoff...
+             minGSSize = 3,  #(gene sets with lower than this many genes in your dataset will be ignored).
+             maxGSSize = 1500, # (gene sets with greater than this many genes in your dataset will be ignored).
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "none")
+
+gse_MF = data.frame(gse@result[["Description"]],gse@result[["core_enrichment"]])
+
+gse_BP = data.frame(gse@result[["Description"]],gse@result[["core_enrichment"]])
+```
+
+## Output
+### Dotplot 
+
+```{r}
+require(DOSE)
+png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/allgenes/MF.png", width = 800, height = 1000)
+dotplot(gse, showCategory=30, split=".sign") + facet_grid(.~.sign)
+dev.off()
+
+```
+
+### Category Netplot
+
+```{r}
+# categorySize can be either 'pvalue' or 'geneNum'
+png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/Category_Netplot.png", width = 1500, height = 1000)
+cnetplot(gse_1sample, categorySize="pvalue", foldChange=original_gene_list, showCategory = 3)
+dev.off()
+```
+
+### Ridge plot
+```{r}
+png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/Ridgeplot.png", width = 1000, height = 1500)
+ridgeplot(gse) + labs(x = "enrichment distribution")
+dev.off()
+```
+
+## Conclusion from GSEA_1:
+If apply adjusted p values -> 3 up or downregulated gene sets
+if dont apply adjusted p values: get kind of the same pathways (T cell sth sth...)
+
+
+
+# GSEA2: For 1 sample
+
+```{r}
+
+c3_obj_logfc = filtered_genes_list[["GSM5924031"]][["log_fc"]] 
+names(c3_obj_logfc) = filtered_genes_list[["GSM5924031"]][["gene_name"]]
+c3_obj_logfc = sort(c3_obj_logfc, decreasing = TRUE)
+
+```
+
+```{r}
+gse_1sample <- gseGO(geneList = c3_obj_logfc, 
+             ont ="CC", 
+             keyType = "SYMBOL", 
+           #  nPerm = 10000, # remove nPerm bc Warning: You are trying to run fgseaSimple. It is recommended to use fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument in the fgsea function call.no term enriched under specific pvalueCutoff...
+             minGSSize = 3,  #(gene sets with lower than this many genes in your dataset will be ignored).
+             maxGSSize = 1500, # (gene sets with greater than this many genes in your dataset will be ignored).
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "none")
+```
+
+## Conclusion from GSEA2: 
+1 sample may make more sense (like no T cell bs), but still hardly any pathways that are signifciant if use p adjust
+
+## GSEA3: what if only use genes from up and down list
+
+```{r}
+rownames(gene_counts_df) = gene_counts_df$Gene
+gene_counts = gene_counts_df [,2]
+names(gene_counts) = rownames(gene_counts_df)
+gene_counts =  sort(gene_counts, decreasing = T)
+up_gene = (names(gene_counts [1:26])) #genes upregulated in at least 6 occurences
+
+rownames(gene_counts_df_down) = gene_counts_df_down$Gene
+gene_counts_down = gene_counts_df_down [,2]
+names(gene_counts_down) = rownames(gene_counts_df_down)
+gene_counts_down =  sort(gene_counts_down, decreasing = T)
+down_gene = names(gene_counts_down [1:46]) #genes upregulated in at least 6 occurences
+
+genes = c(up_gene,down_gene)
+
+
+```
+
+```{r}
+# log fc
+
+genes_fc = names(original_gene_list)  %in% genes
+genes_fc = original_gene_list [genes_fc]
+print(genes_fc)
+```
+
+```{r}
+gse_DEAgenes_MF <- gseGO(geneList=genes_fc, 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+          #   nPerm = 10000, # remove nPerm bc Warning: You are trying to run fgseaSimple. It is recommended to use fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument in the fgsea function call.no term enriched under specific pvalueCutoff...
+             minGSSize = 2,  #(gene sets with lower than this many genes in your dataset will be ignored).
+             maxGSSize = 1500, # (gene sets with greater than this many genes in your dataset will be ignored).
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "none")
+
+gse_DEAgenes_BP <- gseGO(geneList=genes_fc, 
+             ont ="BP", 
+             keyType = "SYMBOL", 
+          #   nPerm = 10000, # remove nPerm bc Warning: You are trying to run fgseaSimple. It is recommended to use fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument in the fgsea function call.no term enriched under specific pvalueCutoff...
+             minGSSize = 3,  #(gene sets with lower than this many genes in your dataset will be ignored).
+             maxGSSize = 1500, # (gene sets with greater than this many genes in your dataset will be ignored).
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "none")
+
+
+
+```
+
+## GSEA KEGG
+
+## Prepare Input 
+```{r}
+# convert gene symbol to keyTypes
+# Convert gene IDs for gseKEGG function
+# We will lose some genes here because not all IDs will be converted
+ids<-bitr(names(original_gene_list), fromType = "SYMBOL", toType = "UNIPROT", OrgDb=organism) #Warning: 1.68% of input gene IDs are fail to map...
+
+ # remove duplicate IDS 
+dedup_ids = ids[!duplicated(ids[c("SYMBOL")]),] # in total 645 genes instead of 656 genes
+
+# Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
+final_df2 = final_df[final_df$gene_name %in% dedup_ids$SYMBOL,]
+
+# Create a new column in df2 with the corresponding ENTREZ IDs
+final_df2$UNIPROT = dedup_ids$UNIPROT
+
+# Create a vector of the gene unuiverse
+kegg_gene_list <- final_df2$mean_log_fc
+
+# Name vector with ENTREZ ids
+names(kegg_gene_list) <- final_df2$UNIPROT
+
+# omit any NA values 
+kegg_gene_list<-na.omit(kegg_gene_list)
+
+# sort the list in decreasing order (required for clusterProfiler)
+kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE) #645 genes
+```
+
+## creating gseKEGG obj
+```{r}
+kegg_organism = "hsa"
+kk2 <- gseKEGG(geneList     = kegg_gene_list,
+               organism     = kegg_organism,
+               #nPerm        = 10000,
+               minGSSize    = 3,
+               maxGSSize    = 800,
+               pvalueCutoff = 0.05,
+               pAdjustMethod = "none",
+               keyType       = "uniprot")
+```
+
+# TMR: 
+Sadaf -> together kinda dont make sense. Alleine makes more sense, but p adjust 
+(try KEGG 1st tho)
+
+## do KEGG for 1 sample only 
+
+```{r}
+
+c3_obj_logfc = filtered_genes_list[["GSM5924031"]][["log_fc"]] 
+names(c3_obj_logfc) = filtered_genes_list[["GSM5924031"]][["gene_name"]]
+
+# convert gene symbol to keyTypes
+# Convert gene IDs for gseKEGG function
+# We will lose some genes here because not all IDs will be converted
+ids<-bitr(names(c3_obj_logfc), fromType = "SYMBOL", toType = "UNIPROT", OrgDb=organism) #Warning: 1.68% of input gene IDs are fail to map...
+
+ # remove duplicate IDS 
+dedup_ids = ids[!duplicated(ids[c("SYMBOL")]),] # in total 645 genes instead of 656 genes
+
+# Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
+final_df2 = c3_obj_logfc[names(c3_obj_logfc) %in% dedup_ids$SYMBOL]
+final_df2 = as.data.frame(final_df2)
+# Create a new column in df2 with the corresponding ENTREZ IDs
+final_df2$UNIPROT = dedup_ids$UNIPROT
+
+# Create a vector of the gene unuiverse
+kegg_gene_list <- final_df2$final_df2
+
+# Name vector with ENTREZ ids
+names(kegg_gene_list) <- final_df2$UNIPROT
+
+# omit any NA values 
+kegg_gene_list<-na.omit(kegg_gene_list)
+
+# sort the list in decreasing order (required for clusterProfiler)
+kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE) #411 genes
+```
+
+```{r}
+kegg_organism = "hsa"
+kk2 <- gseKEGG(geneList     = kegg_gene_list,
+               organism     = kegg_organism,
+               #nPerm        = 10000,
+               minGSSize    = 3,
+               maxGSSize    = 800,
+               pvalueCutoff = 0.05,
+               pAdjustMethod = "none",
+               keyType       = "uniprot")
+```
+# enrichment analysis 
+
+```{r}
+
+# set background genes 
+universe = names(original_gene_list)#background genes: take the genes from original_gene_list
+#universe
+# EnrichGO
+enr = enrichGO(
+  up_gene,
+  organism,
+  keyType = "SYMBOL",
+  ont = "MF",
+  pvalueCutoff = 0.05,
+  pAdjustMethod = "BH",
+  universe,
+  qvalueCutoff = 0.2,
+  minGSSize = 10,
+  maxGSSize = 500,
+  readable = FALSE,
+  pool = FALSE
+)
+
+# EnrichGO
+enr_down = enrichGO(
+  down_gene,
+  organism,
+  keyType = "SYMBOL",
+  ont = "MF",
+  pvalueCutoff = 0.05,
+  pAdjustMethod = "hochberg",
+  universe,
+  qvalueCutoff = 0.2,
+  minGSSize = 10,
+  maxGSSize = 500,
+  readable = FALSE,
+  pool = FALSE
+)
+
+```
+
+```{r}
+library(DOSE)
+library(enrichplot)
+barplot(enr, showCategory=1)
+dotplot(enr, showCategory=30) + ggtitle("dotplot for ORA")
+```
+
+# MAGNET
+
+```{r}
+ saveRDS(up_gene, "/omics/groups/OE0436/internal/Linh/Output/ST/up_gene") 
+saveRDS(names(original_gene_list), "/omics/groups/OE0436/internal/Linh/Output/ST/background") 
+```
+

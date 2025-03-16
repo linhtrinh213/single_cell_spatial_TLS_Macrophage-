@@ -1,0 +1,279 @@
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following object is masked from ‘package:base’:
+
+    intersect
+
+── Installed datasets ──────────────────────────────── SeuratData v0.2.2.9001 ──
+✔ ifnb     3.1.0                        ✔ stxBrain 0.1.1
+
+────────────────────────────────────── Key ─────────────────────────────────────
+✔ Dataset loaded successfully
+❯ Dataset built with a newer version of Seurat than installed
+❓ Unknown version of Seurat installed
+
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: foreach
+Loading required package: iterators
+Loading required package: parallel
+Error: object 'seurat_transformed' not found
+Execution halted
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following object is masked from ‘package:base’:
+
+    intersect
+
+── Installed datasets ──────────────────────────────── SeuratData v0.2.2.9001 ──
+✔ ifnb     3.1.0                        ✔ stxBrain 0.1.1
+
+────────────────────────────────────── Key ─────────────────────────────────────
+✔ Dataset loaded successfully
+❯ Dataset built with a newer version of Seurat than installed
+❓ Unknown version of Seurat installed
+
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: foreach
+Loading required package: iterators
+Loading required package: parallel
+Error: object 'seurat_transformed' not found
+Execution halted
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following object is masked from ‘package:base’:
+
+    intersect
+
+── Installed datasets ──────────────────────────────── SeuratData v0.2.2.9001 ──
+✔ ifnb     3.1.0                        ✔ stxBrain 0.1.1
+
+────────────────────────────────────── Key ─────────────────────────────────────
+✔ Dataset loaded successfully
+❯ Dataset built with a newer version of Seurat than installed
+❓ Unknown version of Seurat installed
+
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: foreach
+Loading required package: iterators
+Loading required package: parallel
+Error: object 'seurat_transformed' not found
+Execution halted
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: igraph
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:dplyr’:
+
+    as_data_frame, groups, union
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: ggplot2
+Warning message:
+The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead. 
+Error in Cells(exm_31) : could not find function "Cells"
+Calls: data.frame
+Execution halted
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: igraph
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:dplyr’:
+
+    as_data_frame, groups, union
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: ggplot2
+Warning message:
+The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead. 
+Error in Cells(exm_31) : could not find function "Cells"
+Calls: data.frame
+Execution halted
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: igraph
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:dplyr’:
+
+    as_data_frame, groups, union
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: ggplot2
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    intersect
+
+The following object is masked from ‘package:base’:
+
+    intersect
+
+
+Attaching package: ‘Seurat’
+
+The following object is masked from ‘package:igraph’:
+
+    components
+
+Warning message:
+The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead. 
+Error in fromJSON(txt = file_path) : could not find function "fromJSON"
+Execution halted
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: igraph
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:dplyr’:
+
+    as_data_frame, groups, union
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: ggplot2
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following object is masked from ‘package:BiocGenerics’:
+
+    intersect
+
+The following object is masked from ‘package:base’:
+
+    intersect
+
+
+Attaching package: ‘Seurat’
+
+The following object is masked from ‘package:igraph’:
+
+    components
+
+Warning message:
+The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead. 
+Error in checkNumberOfLocalWorkers(workers) : 
+  Attempting to set up 4 localhost parallel workers with only 1 CPU cores available for this R process (per ‘cgroups.cpuset’), which could result in a 400% load. The hard limit is set to 300%. Overusing the CPUs has negative impact on the current R process, but also on all other processes of yours and others running on the same machine. See help("parallelly.options", package = "parallelly") for how to override the soft and hard limits
+Calls: <Anonymous> ... makeCluster -> makeClusterPSOCK -> checkNumberOfLocalWorkers
+Execution halted
