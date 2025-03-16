@@ -13,7 +13,7 @@ this study aims to fill this knowledge gap by utilizing single-cell and spatial 
 - **Single-cell analysis:** Integration of single-cell datasets, cell type annotation, classfication of TLS samples, differential expression analysis and gene set enrichment analysis 
 ![single_cell_workflow](results/workflow/single_cell_workflow.png) 
 - **Spatial analysis:** Deconvolution using RCTD, differential expression analysis using C-SIDE, cell-cell communication using LIANA 
-![spatial_workflow](results/workflow/spatial_workflow.png)  
+![spatial_workflow](results/workflow/spatial_workflow.svg)  
 
 
 ## 📈 Results
