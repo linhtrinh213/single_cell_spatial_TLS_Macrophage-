@@ -1,5 +1,5 @@
 *.R linguist-language=R
 *.Rmd linguist-language=R
 *.html linguist-language=R
-*.log linguist-language=R
-*.sh linguist-language=Bash
+*.log linguist-language=bash
+*.sh linguist-language=bash
