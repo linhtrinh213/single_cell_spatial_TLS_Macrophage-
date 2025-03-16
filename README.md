@@ -24,7 +24,7 @@ same time, phagocytic activity is increased.
 - Lastly, through studying ligand-receptor interactions,**active recruitment** and **migration** of immune cells in TLS regions are observed.
 
   
-- Key visualizations saved in `results/`
+- Key visualizations saved in `results/` 
 - Differential expression tables for macrophage markers in `results/`
 
 ## 🚀 How to Run
