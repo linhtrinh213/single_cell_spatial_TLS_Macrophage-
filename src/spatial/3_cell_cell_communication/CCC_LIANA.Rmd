@@ -18,9 +18,9 @@ library(dplyr)
 
 ```{r}
 
-liana_test_TLS = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_TLS_LIANA")
+liana_test_TLS = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_TLS_LIANA")
 
-#äliana_test_noTLS = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_domcell_LIANA_NOTLS")
+#äliana_test_noTLS = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/exm_31_domcell_LIANA_NOTLS")
 
 ```
 
