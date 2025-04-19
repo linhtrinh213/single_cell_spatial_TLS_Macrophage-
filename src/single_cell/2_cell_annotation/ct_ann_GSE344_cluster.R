@@ -9,7 +9,7 @@ library(stringr)
 set.seed (0)
 
 
-GSE_integrated = readRDS("/omics/groups/OE0436/internal/Linh/results/GSE_integrated")
+GSE_integrated = readRDS(".../results/GSE_integrated")
 
 # GSE_integrated subset for GSE344: 
 
@@ -19,9 +19,9 @@ GSE344 =  GSE344@assays[["SCT"]]@data # extract the normalised count as well as 
 GSE344_barcode = colnames (GSE344_matrix)
 
 # import all the annotation files 
-setwd("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/")
+setwd(".../Datasets/GSE186344/")
 
-folder_path = "/omics/groups/OE0436/data/Linh/Datasets/GSE186344/" #path to folder
+folder_path = ".../Datasets/GSE186344/" #path to folder
 files <- list.files(folder_path) #list all of the files in folder_path
 celltype = data.frame ()
 
@@ -56,9 +56,9 @@ for (i in 1:length(GSE344_split)) {
   }
 }
 
-write.table(new_row2,"/omics/groups/OE0436/data/Linh/Datasets/GSE186344/new_row2")
+write.table(new_row2,".../Datasets/GSE186344/new_row2")
 ###########################################
-new_row2 = read.table("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/new_row2")
+new_row2 = read.table(".../Datasets/GSE186344/new_row2")
 
 GSE344@Dimnames[[3]] = new_row2 [,1]
 
@@ -69,5 +69,5 @@ GSE344@Dimnames[[3]]  [43265]
 #[1] "MTC" : correct
 
 # save GSE344 as ref dataset
-writeMM (GSE344,"/omics/groups/OE0436/data/Linh/Datasets/Annotation/ref_GSE344")
+writeMM (GSE344,".../Annotation/ref_GSE344")
 
