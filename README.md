@@ -10,9 +10,17 @@ this study aims to fill this knowledge gap by utilizing single-cell and spatial 
 **Spatial transcriptomics data:** GSE175540 contains 24 spatial transcriptomics samples from clear cell renal cell carcinoma tissues (ccRCC).
 
 ## ⚙️ Methods and Workflow 
-- **Single-cell analysis:** Integration of single-cell datasets, cell type annotation, classfication of TLS samples, differential expression analysis and gene set enrichment analysis 
+- **Single-cell analysis:**
+  + Integration of single-cell datasets using Seurat (CCA)
+  + Annotating large single-cell transcriptomics datasets using SingleR 
+  + Classfication of TLS samples using geometric mean
+  + Differential expression analysis
+  + Gene set enrichment analysis using clusterProfiler package
 ![single_cell_workflow](results/workflow/single_cell_workflow.png) 
-- **Spatial analysis:** Deconvolution using RCTD, differential expression analysis using C-SIDE, cell-cell communication using LIANA 
+- **Spatial analysis:**
+  + Deconvolution using RCTD
+  + Differential expression analysis using C-SIDE
+  + Cell-cell communication using LIANA 
 ![spatial_workflow](results/workflow/spatial_workflow.svg)         
 
 
