@@ -546,7 +546,7 @@ GSE174401 <- subset(GSE_all_sub, subset = dataset_ID == "GSE174401")
 GSE131907 <- subset(GSE_all_sub, subset = dataset_ID == "GSE131907") 
 
 GSE234832 <- subset(GSE_all_sub, subset = dataset_ID == "GSE234832") 
-GSE_3datasets <- merge(x =  GSE186344, y = c(GSE174401,.../omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_3datasets")
+GSE_3datasets <- merge(x =  GSE186344, y = c(GSE174401,.../Datasets/Merged/GSE_3datasets")
 
 
 ```
@@ -583,7 +583,7 @@ ElbowPlot(GSE_SCT, ndims = 40) # taking 30 PCs
 GSE_SCT <- RunUMAP(GSE_SCT, dims = 1:30) 
 
 #saving the plot
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/UMAP_b4Integration",width = 1000, height = 700)
+png (".../Output/Preprocessing/UMAP_b4Integration",width = 1000, height = 700)
 DimPlot(GSE_SCT, reduction = "umap", group.by = c("dataset_ID", "seurat_annotations"))
 dev.off()
 

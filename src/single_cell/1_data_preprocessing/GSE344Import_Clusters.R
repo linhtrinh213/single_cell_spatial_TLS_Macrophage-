@@ -18,7 +18,7 @@ library(patchwork)
 
 
 
-folder_path = "/omics/groups/OE0436/data/Linh/Datasets/GSE186344/" #path to folder
+folder_path = ".../Datasets/GSE186344/" #path to folder
 files <- list.files(folder_path) #list all of the files in folder_path
 samples = c(888:898, 900, 902, 904) #in the samples vector, specify which samples you wanna take (by specify the unique number of the samples)
 
@@ -47,7 +47,7 @@ for (sample in samples) {
 # Loop through each matrix in the list and export them individually
 #for (i in seq_along(import_files)) {
   # Construct the file path for exporting
-#  file_name <- paste0("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/matrix_", i, ".mtx")
+#  file_name <- paste0(".../Datasets/GSE186344/matrix_", i, ".mtx")
   
   # Export the matrix using writeMM
 #  writeMM(import_files[[i]], file_name)
@@ -77,6 +77,6 @@ merged_seurat <- merge(x = seurat_objects [[1]], y = c(seurat_objects [[2]], seu
 
 
 # Export seurat object in 10X format so that it can be reimported
-SaveSeuratRds(merged_seurat,"/omics/groups/OE0436/data/Linh/Datasets/GSE186344/merged_seurat") #take a bit 
+SaveSeuratRds(merged_seurat,".../Datasets/GSE186344/merged_seurat") #take a bit 
 
-#imported_seurat_obj = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/merged_seurat")
+#imported_seurat_obj = readRDS (".../Datasets/GSE186344/merged_seurat")
