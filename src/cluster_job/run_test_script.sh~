@@ -1,6 +1,6 @@
 
 # Set the working directory.
-cd /omics/groups/OE0436/internal/Linh/Code
+cd /
 
 # Load R so that the R script can be executed.
 module load R/4.3.0
