@@ -5,24 +5,24 @@ date: "2024-04-15"
 ---
 
 ```{r Loading in the objects}
-merged_GSE186344 = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/GSE186344/merged_seurat")
-GSE174401_brainmet = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/GSE174401/GSE174401_brainmet")
-GSE234832 = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/GSE234832/GSE234832")
-GSE131907_seurat = readRDS("/omics/groups/OE0436/data/Linh/Datasets/GSE131907/GSE131907_seurat")
-GSE131907_seurat_filtered = readRDS("/omics/groups/OE0436/data/Linh/Datasets/GSE131907/GSE131907_seurat")
-GSE_all = readRDS("/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all")
-GSE_all_sub = readRDS("/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all_sub") #object no scale. 4 datasets
+merged_GSE186344 = readRDS (".../Datasets/GSE186344/merged_seurat")
+GSE174401_brainmet = readRDS (".../Datasets/GSE174401/GSE174401_brainmet")
+GSE234832 = readRDS (".../Datasets/GSE234832/GSE234832")
+GSE131907_seurat = readRDS(".../Datasets/GSE131907/GSE131907_seurat")
+GSE131907_seurat_filtered = readRDS(".../Datasets/GSE131907/GSE131907_seurat")
+GSE_all = readRDS(".../Datasets/Merged/GSE_all")
+GSE_all_sub = readRDS(".../Datasets/Merged/GSE_all_sub") #object no scale. 4 datasets
 
-GSE186344 = readRDS ("/omics/groups/OE0436/internal/Linh/Datasets/GSE186344") #SCTransform object 
-GSE_SCT  = readRDS ( "/omics/groups/OE0436/internal/Linh/results/GSE_SCT") #SCTransform, 3 datasets
-GSE_integrated  = readRDS ( "/omics/groups/OE0436/internal/Linh/results/GSE_integrated") #SCTransform, 3 datasets
+GSE186344 = readRDS (".../Datasets/GSE186344") #SCTransform object 
+GSE_SCT  = readRDS ( ".../results/GSE_SCT") #SCTransform, 3 datasets
+GSE_integrated  = readRDS ( ".../results/GSE_integrated") #SCTransform, 3 datasets
 
 
 ```
 
 ```{r import multiple datasets}
 
-folder_path = "/omics/groups/OE0436/data/Linh/Datasets/GSE186344/" #path to folder
+folder_path = ".../Datasets/GSE186344/" #path to folder
 files <- list.files(folder_path) #list all of the files in folder_path
 samples = c(888:898, 900, 902, 904) #in the samples vector, specify which samples you wanna take (by specify the unique number of the samples)
 
@@ -50,9 +50,7 @@ for (sample in samples) {
 
 ```
 Library(Seurat)
-Error: package or namespace load failed for ‘Seurat’ in dyn.load(file, DLLpath = DLLpath, ...):
- unable to load shared object '/home/k967h/R/x86_64-pc-linux-gnu-library/4.3/igraph/libs/igraph.so':
-  libgfortran.so.5: cannot open shared object file: No such file or directory
+
 
 ```{r loading seurat}
 # 19.04: install these packages again
@@ -117,7 +115,7 @@ In R Script (GSE344Import_Clusters.R)
 
 
 #GSE174401_filtered_feature_bc_matrix.h5
-GSE174401 = Read10X_h5 ("/omics/groups/OE0436/data/Linh/Datasets/GSE174401/GSE174401_filtered_feature_bc_matrix.h5")
+GSE174401 = Read10X_h5 (".../Datasets/GSE174401/GSE174401_filtered_feature_bc_matrix.h5")
 GSE174401 <- CreateSeuratObject(counts = GSE174401, project = "GSE174401", min.cells = 3, min.features = 200)
 
 # subsetting the object
@@ -130,7 +128,7 @@ brainmet_samples = c(31:44) #14 samples
 
 GSE174401_brainmet <- subset(GSE174401, idents = brainmet_samples) 
 
-SaveSeuratRds(GSE174401_brainmet,"/omics/groups/OE0436/data/Linh/Datasets/GSE174401/GSE174401_brainmet") #take a bit 
+SaveSeuratRds(GSE174401_brainmet,".../Datasets/GSE174401/GSE174401_brainmet") #take a bit 
 
 ```
 
@@ -139,7 +137,7 @@ SaveSeuratRds(GSE174401_brainmet,"/omics/groups/OE0436/data/Linh/Datasets/GSE174
 
 ```{r}
 
-GSE131907 <- read.table("/omics/groups/OE0436/data/Linh/Datasets/GSE131907/GSE131907_Lung_Cancer_raw_UMI_matrix.txt", sep = "\t", header = TRUE)
+GSE131907 <- read.table(".../Datasets/GSE131907/GSE131907_Lung_Cancer_raw_UMI_matrix.txt", sep = "\t", header = TRUE)
 
 # change the row names
 rownames (GSE131907) = GSE131907 [,1]
@@ -165,7 +163,7 @@ mbrain_position[position_brain] = "NS_"
 GSE131907_seurat_filtered@meta.data[["mbrain_position"]] = mbrain_position 
 GSE131907_seurat_filtered = subset (GSE131907_seurat_filtered,  subset =  mbrain_position == "NS_")
 
-SaveSeuratRds(GSE131907_seurat_filtered,"/omics/groups/OE0436/data/Linh/Datasets/GSE131907/GSE131907_seurat_filtered") #take a bit 
+SaveSeuratRds(GSE131907_seurat_filtered,".../Datasets/GSE131907/GSE131907_seurat_filtered") #take a bit 
 
 
 # Filter for only brain met samples (10 in 58)
@@ -175,7 +173,7 @@ mbrain_position[position_brain] = "NS_"
 GSE131907_seurat@meta.data[["mbrain_position"]] = mbrain_position 
 GSE131907_seurat = subset (GSE131907_seurat,  subset =  mbrain_position == "NS_")
 
-SaveSeuratRds(GSE131907_seurat,"/omics/groups/OE0436/data/Linh/Datasets/GSE131907/GSE131907_seurat") #take a bit 
+SaveSeuratRds(GSE131907_seurat,".../Datasets/GSE131907/GSE131907_seurat") #take a bit 
 
 ```
 
@@ -183,7 +181,7 @@ SaveSeuratRds(GSE131907_seurat,"/omics/groups/OE0436/data/Linh/Datasets/GSE13190
 
 
 ```{r}
-folder_path = "/omics/groups/OE0436/data/Linh/Datasets/GSE234832/" #path to folder
+folder_path = ".../Datasets/GSE234832/" #path to folder
 files <- list.files(folder_path) #list all of the files in folder_path
 #samples = c(324:328) #in the samples vector, specify which samples you wanna take (by specify the unique number of the samples)
 #try:
@@ -230,7 +228,7 @@ GSE234832 <- merge(x = seurat_objects [[1]], y = c(seurat_objects [[2]], seurat_
 
 
 # Export seurat object in 10X format so that it can be reimported
-SaveSeuratRds(GSE234832,"/omics/groups/OE0436/data/Linh/Datasets/GSE234832/GSE234832") #take a bit 
+SaveSeuratRds(GSE234832,".../Datasets/GSE234832/GSE234832") #take a bit 
 
 ```
 
@@ -251,7 +249,7 @@ Idents(object = GSE_all, cells = GSE_all.cells[91756:99934]) <- "GSE131907"
 Idents(object = GSE_all, cells = GSE_all.cells[99935:118638]) <- "GSE174401"
 Idents(object = GSE_all, cells = GSE_all.cells[118639:128390]) <- "GSE234832"
 
-SaveSeuratRds(GSE_all,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all") #saved 18.04 (4 layers)
+SaveSeuratRds(GSE_all,".../Datasets/Merged/GSE_all") #saved 18.04 (4 layers)
 
 ```
 
@@ -391,7 +389,7 @@ GSE_all@meta.data[["treatment"]] = treatment
 #GSE_all_sub@meta.data[["age"]] = age
 #GSE_all_sub@meta.data[["gender"]] = gender  
 
-SaveSeuratRds(GSE_all,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all") #saved 22.04: with metadata
+SaveSeuratRds(GSE_all,".../Datasets/Merged/GSE_all") #saved 22.04: with metadata
 
 
 ```
@@ -426,19 +424,19 @@ nrow(GSE131907_seurat_filtered)
 GSE_all[["percent.mt"]] <- PercentageFeatureSet(GSE_all, pattern = "^MT-")
 
 #saving the plot
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/VlnPlot_GSE186344_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/VlnPlot_GSE186344_bQC",width = 1000, height = 700)
 VlnPlot(GSE_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, idents = "GSE186344")
 dev.off()
 
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/VlnPlot_GSE174401_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/VlnPlot_GSE174401_bQC",width = 1000, height = 700)
 VlnPlot(GSE_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, idents = "GSE174401")
 dev.off()
 
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/VlnPlot_GSE131907_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/VlnPlot_GSE131907_bQC",width = 1000, height = 700)
 VlnPlot(GSE_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, idents = "GSE131907")
 dev.off()
 
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/VlnPlot_GSE234832_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/VlnPlot_GSE234832_bQC",width = 1000, height = 700)
 VlnPlot(GSE_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, idents = "GSE234832")
 dev.off()
 
@@ -460,12 +458,12 @@ grep("^MT.", rownames(GSE131907_seurat@assays$RNA), value= T) #View mitochondria
 
 ```{r Feature Plots}
 # Feature Scatter
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/FeaturePlot_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/FeaturePlot_bQC",width = 1000, height = 700)
 FeatureScatter(GSE_all, feature1 = "nCount_RNA", feature2 = "percent.mt")
 dev.off()
 
 # Feature Scatter
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/FeaturePlot_CountvsFeature_bQC",width = 1000, height = 700)
+png (".../Output/Preprocessing/FeaturePlot_CountvsFeature_bQC",width = 1000, height = 700)
 FeatureScatter(GSE_all, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
 dev.off()
 
@@ -474,7 +472,7 @@ dev.off()
 ```{r Filtering}
 
 GSE_all_sub <- subset(GSE_all, subset = nFeature_RNA > 150 & nFeature_RNA < 5000 & percent.mt < 20)
-SaveSeuratRds(GSE_all_sub,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all_sub") #saved 25.04 with new parameters
+SaveSeuratRds(GSE_all_sub,".../Datasets/Merged/GSE_all_sub") #saved 25.04 with new parameters
 
 #Remaining cells after filtering
 dim(GSE_all_sub)  #34274 99794
@@ -510,7 +508,7 @@ GSE_all_sub <- NormalizeData(GSE_all_sub, normalization.method = "LogNormalize",
 
 GSE_all_sub <- FindVariableFeatures(GSE_all_sub, selection.method = "vst", nfeatures = 2000)
 
-saveRDS (GSE_all_sub, "/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all_sub2")
+saveRDS (GSE_all_sub, ".../Datasets/Merged/GSE_all_sub2")
 ```
 
 ```{r Scale}
@@ -541,15 +539,14 @@ ElbowPlot(pbmc)
 ```{r Subsetting the datasets}
 
 GSE186344 <- subset(GSE_all_sub, subset = dataset_ID == "GSE186344") 
-saveRDS (GSE186344, "/omics/groups/OE0436/internal/Linh/Datasets/GSE186344")
+saveRDS (GSE186344, ".../Datasets/GSE186344")
 
 GSE174401 <- subset(GSE_all_sub, subset = dataset_ID == "GSE174401") 
 
 GSE131907 <- subset(GSE_all_sub, subset = dataset_ID == "GSE131907") 
 
 GSE234832 <- subset(GSE_all_sub, subset = dataset_ID == "GSE234832") 
-GSE_3datasets <- merge(x =  GSE186344, y = c(GSE174401,GSE234832)) #add.cells.id so that cell barcode don't overlap accidentally
-saveRDS (GSE_3datasets, "/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_3datasets")
+GSE_3datasets <- merge(x =  GSE186344, y = c(GSE174401,.../omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_3datasets")
 
 
 ```
@@ -557,12 +554,12 @@ saveRDS (GSE_3datasets, "/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_3dat
 ```{r SCTransform}
 
 GSE234832 <- SCTransform(GSE234832, return.only.var.genes = TRUE)
-saveRDS (GSE234832, "/omics/groups/OE0436/internal/Linh/Datasets/GSE234832")
+saveRDS (GSE234832, ".../Datasets/GSE234832")
 
 GSE186344 <- SCTransform(GSE186344, return.only.var.genes = TRUE)
 
 GSE174401 <- SCTransform(GSE174401, return.only.var.genes = TRUE)
-saveRDS (GSE174401, "/omics/groups/OE0436/internal/Linh/Datasets/GSE174401")
+saveRDS (GSE174401, ".../Datasets/GSE174401")
 
 
 ```
@@ -608,18 +605,18 @@ GSE_SCT <- FindClusters(GSE_SCT, resolution = 0.6) #try different resolution
 
 GSE_SCT <- RunUMAP(GSE_SCT, dims = 1:30, reduction = "integrated.dr")
 
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/UMAP_afterIntegration2",width = 1000, height = 700)
+png (".../Output/Preprocessing/UMAP_afterIntegration2",width = 1000, height = 700)
 DimPlot(GSE_SCT, reduction = "umap", group.by = c("dataset_ID"))
 dev.off()
 
-saveRDS (GSE_SCT, "/omics/groups/OE0436/internal/Linh/results/GSE_integrated")
+saveRDS (GSE_SCT, ".../results/GSE_integrated")
 
 ```
 
 
 ```{r UMAP plots}
 
-png ("/omics/groups/OE0436/data/Linh/Output/Preprocessing/UMAP_treatment",width = 1000, height = 700)
+png (".../Output/Preprocessing/UMAP_treatment",width = 1000, height = 700)
 DimPlot(GSE_SCT, reduction = "umap", group.by = c("treatment"))
 dev.off()
 
