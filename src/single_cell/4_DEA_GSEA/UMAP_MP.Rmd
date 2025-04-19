@@ -29,12 +29,12 @@ library(pheatmap)
 # Load objects
 
 ```{r load objects}
-GSE_integrated  = readRDS ( "/omics/groups/OE0436/internal/Linh/results/GSE_integrated") #SCTransform, 3 datasets
-GSE_merge_annotated = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_merge_annotated")
-GSE_MP = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/GSE_MP")
-GSE_MP_SCT = readRDS ( "/omics/groups/OE0436/internal/Linh/Datasets/GSE_MP_SCT")
-GSE_MP_pos = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/GSE_MP_pos")
-saveRDS(all.markers,"/omics/groups/OE0436/internal/Linh/Datasets/all.markers_MPpos") # all markers for TLS+ MP (5 clusters)
+GSE_integrated  = readRDS ( ".../results/GSE_integrated") #SCTransform, 3 datasets
+GSE_merge_annotated = readRDS (".../Datasets/Merged/GSE_merge_annotated")
+GSE_MP = readRDS (".../Datasets/DEA/GSE_MP")
+GSE_MP_SCT = readRDS ( ".../Datasets/GSE_MP_SCT")
+GSE_MP_pos = readRDS("...Datasets/GSE_MP_pos")
+saveRDS(all.markers,".../Datasets/all.markers_MPpos") # all markers for TLS+ MP (5 clusters)
 ```
 
 # Subsetting MP
@@ -66,7 +66,7 @@ GSE_sub$TLS_patient = GSE_MP@meta.data[["TLS_patient"]]
 ```
 
 ```{r}
-GSE_MP_SCT = readRDS ( "/omics/groups/OE0436/internal/Linh/Datasets/GSE_MP_SCT")
+GSE_MP_SCT = readRDS ( ".../Datasets/GSE_MP_SCT")
 
 ############################### Clustering with automated var genes
 
@@ -74,16 +74,16 @@ GSE_MP_SCT = RunPCA (GSE_MP_SCT)
 GSE_MP_SCT <- RunUMAP(GSE_MP_SCT, dims = 1:40) 
 
 #saving the plot
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_Anno.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_Anno.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("ct_ann_GSE344_10kSingleR")) #ct_ann_GSE344_10kSingleR
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_cancertypes.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_cancertypes.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("cancer_types")) #ct_ann_GSE344_10kSingleR
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_TLS.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_TLS.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("TLS_patient"))
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_datasets.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_datasets.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("dataset_ID"))
 dev.off()
 ############################### Clustering with DEA genes
@@ -92,19 +92,19 @@ GSE_MP_SCT = RunPCA (GSE_MP_SCT)
 GSE_MP_SCT <- RunUMAP(GSE_MP_SCT, dims = 1:40) 
 
 #saving the plot
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_Anno_DEA.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_Anno_DEA.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("ct_ann_GSE344_10kSingleR")) #ct_ann_GSE344_10kSingleR
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_cancertypes_DEA.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_cancertypes_DEA.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("cancer_types")) #ct_ann_GSE344_10kSingleR
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_TLS_DEA.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_TLS_DEA.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("TLS_patient"))
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_datasets_DEA.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_datasets_DEA.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("dataset_ID"))
 dev.off()
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/UMAP_cluster_datasets.png",width = 800, height = 600)
+png (".../Output/DEA/UMAP_cluster_datasets.png",width = 800, height = 600)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("dataset_ID"))
 dev.off()
 ```
@@ -127,7 +127,7 @@ library(RColorBrewer)
 # Define the alphabet color palette (if not predefined)
 purple_palette <- c("#58508d","#d4b200")
 navy_palette = c("#58508d","#d4b200")
-png ("/omics/groups/OE0436/internal/Linh/Output/new_UMAP/UMAP_cluster0.1.png",width = 650, height = 450)
+png (".../Output/new_UMAP/UMAP_cluster0.1.png",width = 650, height = 450)
 DimPlot(GSE_MP_SCT, reduction = "umap", group.by = c("SCT_snn_res.0.1"))
 dev.off()
 
@@ -253,7 +253,7 @@ MP.markers_all %>%
   #  arrange(desc(avg_log2FC)) %>% 
     slice_head(n = 20) %>%
     ungroup() -> top50
-png ("/omics/groups/OE0436/internal/Linh/Output/new_UMAP/Heatmap_TLSpos.png",width = 800, height = 600)
+png (".../Output/new_UMAP/Heatmap_TLSpos.png",width = 800, height = 600)
 DoHeatmap(GSE_MP_SCT, features = top50$gene) + NoLegend() 
 dev.off
 ```
@@ -334,7 +334,7 @@ GSE_MP_pos@meta.data[["seurat_clusters"]] = cluster_names
 ```{r Plotting}
 DimPlot(GSE_MP_pos, reduction = "umap", group.by = c("seurat_clusters")) #with 0.1 resolution: 5 clusters
 DimPlot(GSE_MP_pos, reduction = "umap", group.by = c("seurat_clusters")) #with 0.1 resolution: 5 clusters
-png ("/omics/groups/OE0436/internal/Linh/Output/new_UMAP/TLSpos.png",width = 500, height = 400)
+png (".../Output/new_UMAP/TLSpos.png",width = 500, height = 400)
 DimPlot(GSE_MP_pos, reduction = "umap", group.by = c("seurat_clusters"),pt.size = 0.5) #with 0.1 resolution: 5 clusters
 dev.off()
 ```
@@ -376,7 +376,7 @@ all.markers %>%
     dplyr::filter(avg_log2FC > 1) %>%
     slice_head(n = 15) %>%
     ungroup() -> top15
-png ("/omics/groups/OE0436/internal/Linh/Output/new_UMAP/Heatmap_TLSpos.png",width = 800, height = 600)
+png (".../Output/new_UMAP/Heatmap_TLSpos.png",width = 800, height = 600)
 DoHeatmap(GSE_MP_pos, features = top15$gene) + NoLegend() #Warning: The following features were omitted as they were not found in the scale.data slot for the SCT assay: PAGE2, CTAG2, PAGE5, PAGE2B, SFTPA2, ELANE, SFTPB, IGLV3-19, IGLV3-1
 dev.off
 ```
@@ -497,19 +497,19 @@ gse_4_BP = data.frame(gse_4@result[["Description"]],gse_4@result[["core_enrichme
 
 ```{r}
 require(DOSE)
-png("/omics/groups/OE0436/internal/Linh/Output/GSEA/cluster0_CC.png", width = 500, height = 600)
+png(".../Output/GSEA/cluster0_CC.png", width = 500, height = 600)
 dotplot(gse_0, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dev.off()
-png("/omics/groups/OE0436/internal/Linh/Output/GSEA/cluster1_CC.png", width = 500, height = 600)
+png(".../GSEA/cluster1_CC.png", width = 500, height = 600)
 dotplot(gse_1, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dev.off()
-png("/omics/groups/OE0436/internal/Linh/Output/GSEA/cluster2_CC.png", width = 500, height = 600)
+png(".../GSEA/cluster2_CC.png", width = 500, height = 600)
 dotplot(gse_2, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dev.off()
-png("/omics/groups/OE0436/internal/Linh/Output/GSEA/cluster3_MF.png", width = 500, height = 600)
+png(".../Output/GSEA/cluster3_MF.png", width = 500, height = 600)
 dotplot(gse_3, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dev.off()
-png("/omics/groups/OE0436/internal/Linh/Output/GSEA/cluster4_MF.png", width = 550, height = 650)
+png(".../Output/GSEA/cluster4_MF.png", width = 550, height = 650)
 dotplot(gse_4, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dev.off()
 
