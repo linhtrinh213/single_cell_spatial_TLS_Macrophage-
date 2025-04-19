@@ -37,12 +37,12 @@ library (hdf5r)
 GSE_merge was created in DEA_Classification
 
 ```{r}
-readRDS(GSE_merge,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
-saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") #only immune cells, around 25k. Saved 13.05 - run second time
-celltype = readRDS( "/omics/groups/OE0436/data/Linh/Datasets/DEA/cell_type")
+readRDS(GSE_merge,".../Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
+saveRDS (patient_list, ".../Datasets/DEA/patient_list") #only immune cells, around 25k. Saved 13.05 - run second time
+celltype = readRDS( ".../Datasets/DEA/cell_type")
 
-saveRDS(GSE_rest2, "/omics/groups/OE0436/data/Linh/Datasets/DEA/GSE_rest2") #only samples that passed the threshold for cell numbers
-saveRDS (geometric_means, "/omics/groups/OE0436/data/Linh/Datasets/DEA/TLS_score_allcells")
+saveRDS(GSE_rest2, ".../Datasets/DEA/GSE_rest2") #only samples that passed the threshold for cell numbers
+saveRDS (geometric_means, ".../Datasets/DEA/TLS_score_allcells")
 
 ```
 
@@ -85,7 +85,7 @@ GSE_rest2 = merge(GSE_list[[1]],c(GSE_list[[2]],GSE_list[[3]],GSE_list[[4]],GSE_
 #rm (GSE_list) # to free memory
 # Join layers
 GSE_rest2@assays[["RNA"]] = JoinLayers(GSE_rest2@assays[["RNA"]]) #GSE_rest2: 25k cells 
-saveRDS(GSE_rest2, "/omics/groups/OE0436/data/Linh/Datasets/DEA/GSE_rest2") #only immune cells, around 25k. Saved 13.05 - run second time
+saveRDS(GSE_rest2, ".../Datasets/DEA/GSE_rest2") #only immune cells, around 25k. Saved 13.05 - run second time
 
 ```
 
@@ -130,8 +130,8 @@ for (i in 1:length(patients)){
   
   patient_list[[patients[i]]] = matrix_patient  #adding to a list
 }
-#saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") 
-#patient_list = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list")
+#saveRDS (patient_list, ".../Datasets/DEA/patient_list") 
+#patient_list = readRDS (".../Datasets/DEA/patient_list")
 ```
 
 ## Calculating mean for each patients
@@ -180,7 +180,7 @@ geometric_means$score = as.numeric(geometric_means$score)
 #boxplot (as.numeric(score_only)) 
 #points(as.numeric(score_only))
 
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/TLS_Score_subset2.png",width = 700, height = 1000)
+png (".../Output/DEA/TLS_Score_subset2.png",width = 700, height = 1000)
 ggplot(geometric_means, aes(x = "Patient_ID",y = as.numeric(score))) + geom_boxplot(fill = "transparent") + geom_point(color="blue", size= 2 , alpha=0.9) + labs(titel="TLS Signature Scores", y = "Scores")
 dev.off()
 
@@ -206,8 +206,8 @@ for (i in 1:length(patients)){
   
   patient_list[[patients[i]]] = matrix_patient  #adding to a list
 }
-#saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") 
-#patient_list = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list")
+#saveRDS (patient_list, ".../Datasets/DEA/patient_list") 
+#patient_list = readRDS (".../Datasets/DEA/patient_list")
 ```
 
 ## Calculating mean for each patients
@@ -242,7 +242,7 @@ geo_mean_manually = exp(mean(log(patient_df_try$GSE186344_888))) #geo_mean_manua
 geometric_means <- apply(patient_df_try, 2, geometric.mean) #2: columns # alot of 0 initially 
 
 geometric_means 
-saveRDS (geometric_means, "/omics/groups/OE0436/data/Linh/Datasets/DEA/TLS_score_allcells")
+saveRDS (geometric_means, ".../Datasets/DEA/TLS_score_allcells")
 # TLSneg = GSE174401_904 GSE186344_898 GSE174401_915 GSE234832_324 GSE174401_912 (GSE186344_902 changed quite a lot, 20 scores)
 ```
 
@@ -259,7 +259,7 @@ geometric_means$score = as.numeric(geometric_means$score)
 #boxplot (as.numeric(score_only)) 
 #points(as.numeric(score_only))
 
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/TLS_Score_2.png",width = 700, height = 1000)
+png (".../Output/DEA/TLS_Score_2.png",width = 700, height = 1000)
 ggplot(geometric_means, aes(x = "Patient_ID",y = as.numeric(score))) + geom_boxplot(fill = "transparent") + geom_point(color="blue", size= 2 , alpha=0.9) + labs(titel="TLS Signature Scores", y = "Scores")
 dev.off()
 

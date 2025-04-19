@@ -31,8 +31,8 @@ library (hdf5r)
 # Loading objects 
 
 ```{r}
-GSE_merge = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
-saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") #only immune cells, around 25k. Saved 13.05 - run second time
+GSE_merge = readRDS(".../Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
+saveRDS (patient_list, ".../Datasets/DEA/patient_list") #only immune cells, around 25k. Saved 13.05 - run second time
 
 
 ```
@@ -48,7 +48,7 @@ tls_core_signature <- c("CCL2","CCL3","CCL4","CCL5","CCL8","CCL18","CCL19","CCL2
 
 ```{r Import GSE}
 
-GSE_all_sub = readRDS("/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_all_sub") #object no scale. 4 datasets
+GSE_all_sub = readRDS(".../Datasets/Merged/GSE_all_sub") #object no scale. 4 datasets
 GSE186344 = subset (GSE_all_sub, subset = dataset_ID == "GSE186344")
 GSE174401 = subset (GSE_all_sub, subset = dataset_ID == "GSE174401")
 GSE234832 = subset (GSE_all_sub, subset = dataset_ID == "GSE234832")
@@ -67,10 +67,10 @@ GSE_merge@assays[["RNA"]] = NormalizeData(GSE_merge@assays[["RNA"]]) #default us
 
 ```{r}
 
-#ct_ann_GSE344_10kSingleR = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/Annotation/ct_ann_GSE344_10kSingleR")
+#ct_ann_GSE344_10kSingleR = readRDS (".../Datasets/Annotation/ct_ann_GSE344_10kSingleR")
 GSE_merge@meta.data[["ct_ann_GSE344_10kSingleR"]] = ct_ann_GSE344_10kSingleR@listData[["pruned.labels"]] #adding the metadata info 
 
-saveRDS(GSE_merge,"/omics/groups/OE0436/data/Linh/Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
+saveRDS(GSE_merge,".../Datasets/Merged/GSE_merge_annotated") #GSE 3 datasets,annotated
 
 # subsetting for a group of cells for classifcation 
 cell_sub = c("MAMs:APOE+", "MAMs:S100A8+","T:CD4+:CM1", "T:CD8+:EM","Treg", "T:CD4+:CM2","T:CM", "B-c2","B-c1", "cDC2:CD1C+/CLEC10A+")
@@ -108,8 +108,8 @@ for (i in 1:length(patients)){
   
   patient_list[[patients[i]]] = matrix_patient  #adding to a list
 }
-saveRDS (patient_list, "/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list") 
-patient_list = readRDS ("/omics/groups/OE0436/data/Linh/Datasets/DEA/patient_list")
+saveRDS (patient_list, ".../Datasets/DEA/patient_list") 
+patient_list = readRDS (".../Datasets/DEA/patient_list")
 ```
 
 # Calculating mean + normalised for each patients
@@ -164,7 +164,7 @@ geometric_means$score = as.numeric(geometric_means$score)
 #boxplot (as.numeric(score_only)) 
 #points(as.numeric(score_only))
 
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/TLS_Score_subset.png",width = 700, height = 1000)
+png (".../Output/DEA/TLS_Score_subset.png",width = 700, height = 1000)
 ggplot(geometric_means, aes(x = "Patient_ID",y = as.numeric(score))) + geom_boxplot(fill = "transparent") + geom_point(color="blue", size= 2 , alpha=0.9) + labs(titel="TLS Signature Scores", y = "Scores")
 dev.off()
 
@@ -244,7 +244,7 @@ for (i in 1:33) {
 
 rownames (celltype) = names (patients_list) 
 
-saveRDS(celltype, "/omics/groups/OE0436/data/Linh/Datasets/DEA/cell_type")
+saveRDS(celltype, ".../Datasets/DEA/cell_type")
 
 ID = lapply(patients, function(patient) which(GSE_merge@meta.data[["sample_ID"]] == patient))
 
@@ -282,7 +282,7 @@ celltype_longtry = celltype_long [,c("All_infos","Cell_Type","Count")]
  
 
 # Stacked
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/StackedBarPlotofCellCounts.png",width =1000, height = 700)
+png (".../Output/DEA/StackedBarPlotofCellCounts.png",width =1000, height = 700)
 ggplot(celltype_longtry, aes(fill=Cell_Type, y=Count, x=All_infos)) + 
     geom_bar(position="stack", stat="identity")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -299,7 +299,7 @@ celltype = cbind(sample_name,celltype)
 celltype_long <- pivot_longer(celltype, cols = c(MP_count), names_to = "Cell_Type", values_to = "Count")
 celltype_longtry = celltype_long [,c("sample_name","Cell_Type","Count")]
 # Stacked
-png ("/omics/groups/OE0436/internal/Linh/Output/DEA/MP_Count.png",width =700, height = 550)
+png (".../Output/DEA/MP_Count.png",width =700, height = 550)
 MP = ggplot(celltype_longtry, aes(fill=Cell_Type, y=Count, x=sample_name)) + 
     geom_bar(stat="identity")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -313,7 +313,7 @@ dev.off()
 celltype_long <- pivot_longer(celltype, cols = c(T_cells_count), names_to = "Cell_Type", values_to = "Count")
 celltype_longtry = celltype_long [,c("sample_name","Cell_Type","Count")]
 # Stacked
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/T_Count.png",width =700, height = 550)
+png (".../Output/DEA/T_Count.png",width =700, height = 550)
 T = ggplot(celltype_longtry, aes(fill=Cell_Type, y=Count, x=sample_name)) + 
     geom_bar(stat="identity")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -326,7 +326,7 @@ dev.off()
 celltype_long <- pivot_longer(celltype, cols = c(B_count), names_to = "Cell_Type", values_to = "Count")
 celltype_longtry = celltype_long [,c("sample_name","Cell_Type","Count")]
 # Stacked
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/B_Count.png",width =700, height = 550)
+png (".../Output/DEA/B_Count.png",width =700, height = 550)
 B = ggplot(celltype_longtry, aes(fill=Cell_Type, y=Count, x=sample_name)) + 
     geom_bar(stat="identity")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -338,7 +338,7 @@ dev.off()
 celltype_long <- pivot_longer(celltype, cols = c(DC_count), names_to = "Cell_Type", values_to = "Count")
 celltype_longtry = celltype_long [,c("sample_name","Cell_Type","Count")]
 # Stacked
-png ("/omics/groups/OE0436/data/Linh/Output/DEA/DC_count.png",width =700, height = 400)
+png (".../Output/DEA/DC_count.png",width =700, height = 400)
 DC = ggplot(celltype_longtry, aes(fill=Cell_Type, y=Count, x=sample_name)) + 
     geom_bar(stat="identity")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
