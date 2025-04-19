@@ -10,8 +10,8 @@ library(Matrix)
 library(doParallel)
 
 
-myRCTD_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_list")
-seurat_transformed = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
+myRCTD_list = readRDS(".../Output/ST/myRCTD_list")
+seurat_transformed = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
 
 
 
@@ -41,7 +41,7 @@ RunRCTD = function(myRCTD, explanatory_variable) {
 myRCTD_list = mapply (RunRCTD, myRCTD_list,explanatory_variable_list, SIMPLIFY = F) #mapply is used to apply RunRCTD to each pair of myRCTD_list and explanatory_variable_list. SIMPLIFY = FALSE ensures the output is a list.
 #SIMPLIFY = FALSE ensures the output is a list. 
 
-saveRDS(myRCTD_list, "/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_DEA")
+saveRDS(myRCTD_list, ".../Output/ST/myRCTD_DEA")
 
 ############################################################ try with 0.25 weight threshold
 myRCTD_list_DEA_new  = list()
@@ -99,7 +99,7 @@ myRCTD_list_DEA_new [[16]] =  run.CSIDE.single(myRCTD_list [[16]], explanatory_v
                                               doublet_mode = FALSE, weight_threshold = 0.15, 
                                               cell_type_threshold = 0)
 
-saveRDS(myRCTD_list, "/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_DEA_0.25")
+saveRDS(myRCTD_list, ".../Output/ST/myRCTD_DEA_0.25")
 ############################################################################### Inspecting results 
 newthr = myRCTD_list_DEA_new[[1]]@de_results[["all_gene_list"]][["Macro"]]
 newthr$gene_name = rownames(newthr)

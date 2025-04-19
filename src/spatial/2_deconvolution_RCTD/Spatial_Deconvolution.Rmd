@@ -9,7 +9,7 @@ https://omnideconv.org/immunedeconv/articles/immunedeconv.html#introduction
 Installation of the pakage: https://www.rdocumentation.org/packages/immunedeconv/versions/2.0.3
 
 ```{r load object}
-saveRDS (c3_obj,"/omics/groups/OE0436/data/Linh/Datasets/Spatial_transcriptomics/c3_obj" )
+saveRDS (c3_obj,".../Datasets/Spatial_transcriptomics/c3_obj" )
 
 ```
 

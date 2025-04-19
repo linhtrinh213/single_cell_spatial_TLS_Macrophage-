@@ -11,8 +11,8 @@ library(doParallel)
 
 
 
-ref = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
-seurat_transformed = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
+ref = readRDS(".../Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
+seurat_transformed = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
 
 ################################################################## offset the coords
 # Offset for slice 2 (adjust the offset values as needed)
@@ -139,5 +139,5 @@ query <- SpatialRNA(coords, counts, colSums(counts))
 myRCTD <- create.RCTD(query, reference, max_cores = 8)
 myRCTD <- run.RCTD(myRCTD, doublet_mode = 'full')
 
-saveRDS(myRCTD,"/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_combine_try2")
+saveRDS(myRCTD,".../Output/ST/myRCTD_combine_try2")
 

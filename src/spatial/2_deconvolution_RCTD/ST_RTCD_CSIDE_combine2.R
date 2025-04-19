@@ -10,8 +10,8 @@ library(Matrix)
 library(doParallel)
 
 
-ref = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
-seurat_transformed = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
+ref = readRDS(".../Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
+seurat_transformed = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
 
 ################################################################## offset the coords
 # Offset for slice 2 (adjust the offset values as needed)
@@ -139,7 +139,7 @@ query <- SpatialRNA(coords, counts, colSums(counts))
 myRCTD <- create.RCTD(query, reference, max_cores = 8)
 myRCTD <- run.RCTD(myRCTD, doublet_mode = 'full')
 
-saveRDS(myRCTD,"/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_combine")
+saveRDS(myRCTD,".../Output/ST/myRCTD_combine")
 
 
 ################################################################## C-SIDE
@@ -157,7 +157,7 @@ print(sum(explanatory_variable  == 1)) # number of TLS positive pixels. 2220 pix
 myRCTD@config$max_cores <- 2
 myRCTD <- run.CSIDE.single(myRCTD, explanatory_variable, cell_types = "Macro", doublet_mode = F, weight_threshold = 0.25, cell_type_threshold = 50) 
 
-saveRDS(myRCTD,"/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_combine_DEA")
+saveRDS(myRCTD,".../Output/ST/myRCTD_combine_DEA")
 
 ##################################################################### Exploring results
 

@@ -16,7 +16,7 @@ library(dplyr)
 
 ```{r loading objects}
 
-filtered_genes_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0) (from ST_Import_allsample.Rmd)
+filtered_genes_list = readRDS(".../Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0) (from ST_Import_allsample.Rmd)
 
 ```
 
@@ -79,7 +79,7 @@ gse_BP = data.frame(gse@result[["Description"]],gse@result[["core_enrichment"]])
 
 ```{r}
 require(DOSE)
-png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/allgenes/MF.png", width = 800, height = 1000)
+png(".../Output/ST/All_samples/GSEA/allgenes/MF.png", width = 800, height = 1000)
 dotplot(gse, showCategory=30, split=".sign") + facet_grid(.~.sign)
 dev.off()
 
@@ -89,14 +89,14 @@ dev.off()
 
 ```{r}
 # categorySize can be either 'pvalue' or 'geneNum'
-png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/Category_Netplot.png", width = 1500, height = 1000)
+png(".../Output/ST/All_samples/GSEA/Category_Netplot.png", width = 1500, height = 1000)
 cnetplot(gse_1sample, categorySize="pvalue", foldChange=original_gene_list, showCategory = 3)
 dev.off()
 ```
 
 ### Ridge plot
 ```{r}
-png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/GSEA/Ridgeplot.png", width = 1000, height = 1500)
+png(".../Output/ST/All_samples/GSEA/Ridgeplot.png", width = 1000, height = 1500)
 ridgeplot(gse) + labs(x = "enrichment distribution")
 dev.off()
 ```
@@ -332,7 +332,7 @@ dotplot(enr, showCategory=30) + ggtitle("dotplot for ORA")
 # MAGNET
 
 ```{r}
- saveRDS(up_gene, "/omics/groups/OE0436/internal/Linh/Output/ST/up_gene") 
-saveRDS(names(original_gene_list), "/omics/groups/OE0436/internal/Linh/Output/ST/background") 
+ saveRDS(up_gene, ".../Output/ST/up_gene") 
+saveRDS(names(original_gene_list), ".../Output/ST/background") 
 ```
 

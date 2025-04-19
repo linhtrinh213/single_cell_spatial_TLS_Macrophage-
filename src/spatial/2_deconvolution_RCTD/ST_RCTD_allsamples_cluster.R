@@ -11,8 +11,8 @@ library(doParallel)
 
 
 
-ref = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
-seurat_transformed = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
+ref = readRDS(".../Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
+seurat_transformed = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
 
 ################################################################## sc ref
 counts = ref@assays[["SCT"]]@counts
@@ -55,4 +55,4 @@ return_RCTD <- function(seurat_obj, reference, max_cores = 8) {
 
 myRCTD_list = lapply (seurat_transformed, function(x) return_RCTD(x,reference))
 
-saveRDS(myRCTD_list,"/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_list")
+saveRDS(myRCTD_list,".../Output/ST/myRCTD_list")

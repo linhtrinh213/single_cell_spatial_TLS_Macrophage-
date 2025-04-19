@@ -23,17 +23,17 @@ library(ggplot2)
 ```
 
 ```{r load objects}
-output_dir = "/omics/groups/OE0436/internal/Linh/Output/ST/All_samples"
-seurat_transformed = readRDS("/omics/groups/OE0436/internal/Linh/Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
+output_dir = ".../Output/ST/All_samples"
+seurat_transformed = readRDS(".../Datasets/Spatial_transcriptomics/Seurat_obj/seurat_transformed")
 
-myRCTD_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_list") #RCTD object (individually,no DEA yet) 
-TLS_maturity_score = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/TLS_maturity_score.rds")
-myRCTD_DEA = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_DEA") #RCTD object (individually) 
-filtered_genes_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0)
-#saveRDS(TLS_score,"/omics/groups/OE0436/internal/Linh/Output/ST/TLS_signature_score.rds")
-#saveRDS(TLS_score,"/omics/groups/OE0436/internal/Linh/Output/ST/TLS_maturity_score.rds")
-saveRDS(merge_ST,"/omics/groups/OE0436/internal/Linh/Output/ST/merge_ST") 
-GeneCard_MP = read.csv("/omics/groups/OE0436/internal/Linh/Output/ST/GeneCards-SearchResults.csv")
+myRCTD_list = readRDS(".../Output/ST/myRCTD_list") #RCTD object (individually,no DEA yet) 
+TLS_maturity_score = readRDS(".../Output/ST/TLS_maturity_score.rds")
+myRCTD_DEA = readRDS(".../Output/ST/myRCTD_DEA") #RCTD object (individually) 
+filtered_genes_list = readRDS(".../Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0)
+#saveRDS(TLS_score,".../Output/ST/TLS_signature_score.rds")
+#saveRDS(TLS_score,".../Output/ST/TLS_maturity_score.rds")
+saveRDS(merge_ST,".../Output/ST/merge_ST") 
+GeneCard_MP = read.csv(".../Output/ST/GeneCards-SearchResults.csv")
 # Extract first 1000 genes (With the highest relevant score)
 GeneCard_MP = GeneCard_MP[1:1000,]
 # Extact the gene names
@@ -49,7 +49,7 @@ Filtering: Spatial spots featuring more than 30% of mitochondrial genes and less
 ```{r Importing samples}
 
 #################### Importing samples 
-data_dir = "/omics/groups/OE0436/data/Linh/Datasets/Spatial_transcriptomics/GSE175540/"
+data_dir = ".../Datasets/Spatial_transcriptomics/GSE175540/"
 sample_names = paste0("GSM59240",30:53) #create vector that contain my sample names 
 # Initialize an empty list to store the Seurat objects
 seurat_objects <- list()
@@ -239,7 +239,7 @@ combined_plot
 dev.off()
 
 # Plot only 46
-png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/Preprocessing/TLS_Annotation_46.png", width = 800, height = 800)
+png(".../Output/ST/All_samples/Preprocessing/TLS_Annotation_46.png", width = 800, height = 800)
 SpatialPlot(seurat_transformed[["GSM5924046"]], group.by = "TLS_anno") + 
             ggtitle( "TLS Annotation")
 dev.off()
@@ -443,12 +443,12 @@ plot_list <- lapply(names(seurat_transformed), function(sample_name) {
 # Combine all the plots into one
 all_combined_plots <- wrap_plots(plot_list)
 
-png(paste0("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/SpatialFeaturePlot/PDCD1.png"), width = 2500, height = 2000)
+png(paste0(".../Output/ST/All_samples/SpatialFeaturePlot/PDCD1.png"), width = 2500, height = 2000)
 all_combined_plots
 dev.off()
 
 genes = c("MRC1", "CD163", "TGM2", "STAT6","FCGR3A", "CYBB", "TLR2", "STAT1")
-png(paste0("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/SpatialFeaturePlot/M1M2_Boxplot.png"), width = 1500, height = 1000)
+png(paste0(".../Output/ST/All_samples/SpatialFeaturePlot/M1M2_Boxplot.png"), width = 1500, height = 1000)
 SpatialFeaturePlot(seurat_transformed[["GSM5924046"]], features = genes,ncol = 4) 
 dev.off()
 
@@ -478,7 +478,7 @@ for (gene in genes_vector) {
   all_combined_plots <- wrap_plots(plot_list)
   
   # Save the combined plots as an image
-  output_file <- paste0("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/SpatialFeaturePlot/", gene, ".png")
+  output_file <- paste0(".../Output/ST/All_samples/SpatialFeaturePlot/", gene, ".png")
   png(output_file, width = 2500, height = 2000)
   print(all_combined_plots)
   dev.off()
@@ -553,7 +553,7 @@ for (sample_id in names(seurat_transformed)) {
 multiplot <- wrap_plots (plots_list,ncol =4)
 
 # Print or save the combined plot
-png ("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/Boxplots/FCGR3A.png",width = 1500, height = 1700)
+png (".../Output/ST/All_samples/Boxplots/FCGR3A.png",width = 1500, height = 1700)
 multiplot
 dev.off()
 
@@ -714,7 +714,7 @@ for (gene in genes_new) {
 multiplot <- wrap_plots (plots_list,ncol =4)
 
 # Print or save the combined plot
-png ("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/Boxplots/PosvsNeg_final4.png",width = 1300, height = 1000)
+png (".../Output/ST/All_samples/Boxplots/PosvsNeg_final4.png",width = 1300, height = 1000)
 multiplot
 dev.off()
 
@@ -914,7 +914,7 @@ for (M2_gene in M2_genes) {
 multiplot <- wrap_plots (plots_list,ncol =4)
 
 # Print or save the combined plot
-png ("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/Boxplots/M1vsM2_final4.png",width = 1000, height = 1500)
+png (".../Output/ST/All_samples/Boxplots/M1vsM2_final4.png",width = 1000, height = 1500)
 multiplot
 dev.off()
 
@@ -1004,10 +1004,10 @@ geo_mean_df <- lapply(geo_mean, function(x) geometric.mean(x)) #2: columns # a l
 
 TLS_score = as.data.frame(geo_mean_df) 
 TLS_score
-#saveRDS(TLS_score,"/omics/groups/OE0436/internal/Linh/Output/ST/TLS_signature_score.rds")
-#saveRDS(TLS_score,"/omics/groups/OE0436/internal/Linh/Output/ST/TLS_maturity_score.rds")
+#saveRDS(TLS_score,".../Output/ST/TLS_signature_score.rds")
+#saveRDS(TLS_score,".../Output/ST/TLS_maturity_score.rds")
 
-TLS_sig = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/TLS_signature_score.rds")
+TLS_sig = readRDS(".../Output/ST/TLS_signature_score.rds")
 # sum(17.8762,  28.13698, 26.22897 ,27.27601 ,22.39938,  18.00745 , 20.48693 , 18.71535,   29.15955 )/ 9  for TLS high group
 #[1] 23.14298
 # all larger than 18 
@@ -1142,7 +1142,7 @@ SPP1 = as.numeric(gene_TLS)/as.numeric(gene_nonTLS)
 MZB1 = as.numeric(gene_TLS)
 
 FOXP3 =  as.numeric(gene_TLS)
-TLS_signature_score = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/TLS_signature_score.rds")
+TLS_signature_score = readRDS(".../Output/ST/TLS_signature_score.rds")
 
 cor.test(as.numeric(APOE),as.numeric(Treg_prop/Treg_prop_neg), method = "pearson") # pvalue = 0.3 
 #SPP1 and maturity: p = 0.11
@@ -1174,7 +1174,7 @@ cor.test(as.numeric(Treg_prop),as.numeric(TLS_maturity_score), method = "pearson
 
 ```{r normalisation results}
 
-myRCTD_list = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_list")
+myRCTD_list = readRDS(".../Output/ST/myRCTD_list")
 results_list <- lapply(myRCTD_list, function(x) x@results)
 # normalize the cell type proportions to sum to 1.
 norm_weights = lapply(results_list, function(x) normalize_weights(x$weights))
@@ -1264,7 +1264,7 @@ merge_slice = merge(slide1,c(slide2,slide3,slide4,slide5,slide6,slide7,slide8,sl
 
 ```{r RCTD}
 ########### sc ref
-ref = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
+ref = readRDS(".../Output/ST/sc_ref") #SCT, with annotation, joined layers (ccRCC)
 random_cells = sample(Cells(ref),15000)
 ref_sub = ref[,random_cells]
 
@@ -1369,8 +1369,8 @@ filter_and_merge_genes <- function(gene_data, MP_gene_database) {
 }
 
 filtered_genes_list <- lapply(all_genes, filter_and_merge_genes, GeneCard_MP)
-saveRDS(filtered_genes_list,"/omics/groups/OE0436/internal/Linh/Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0)
-filtered_genes_list = readRDS ("/omics/groups/OE0436/internal/Linh/Output/ST/filtered_genes_list")
+saveRDS(filtered_genes_list,".../Output/ST/filtered_genes_list") #DEA results all samples (individually, threshold = 0)
+filtered_genes_list = readRDS (".../Output/ST/filtered_genes_list")
 ```
 
 ```{r}
@@ -1462,7 +1462,7 @@ filtered_all <- gene_data[gene_data$gene_name %in% GeneCard_MP, ]
 
 ## Extracting CSIDE  results
 ```{r Not filter for MP genes}
-myRCTD = readRDS("/omics/groups/OE0436/internal/Linh/Output/ST/myRCTD_combine_DEA")
+myRCTD = readRDS(".../Output/ST/myRCTD_combine_DEA")
 
 DEA_combine = myRCTD@de_results[["sig_gene_list"]][["Macro"]]
 DEA_combine$gene_name = rownames(DEA_combine)
@@ -1508,7 +1508,7 @@ top10_list = mapply(prop_barplot, seurat_transformed,norm_weights, SIMPLIFY =  F
 
 # Generate the plot 
 
-output_dir = "/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/RCTD/Barplots/"
+output_dir = ".../Output/ST/All_samples/RCTD/Barplots/"
 for (i in 1:length(top10_list)){
   sample_name = names (norm_weights[[i]])
   plot_path <- paste0(output_dir,sample_name[[i]], ".png")
@@ -1601,7 +1601,7 @@ colnames(mean_df) = "Weights"
 mean_df$CellType = rownames(mean_df)
 #top_10 <- as.data.frame(mean_df[order(-mean_df)][1:10])
  
-  png("/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/RCTD/Barplots/Allsamples_Barplot/TLS_neg.png", width = 500, height = 1000)
+  png(".../Output/ST/All_samples/RCTD/Barplots/Allsamples_Barplot/TLS_neg.png", width = 500, height = 1000)
       ggplot(mean_df, aes(x = "", y = Weights, fill = CellType)) +
         geom_bar(stat = "identity") +
         theme_minimal() +
@@ -1623,7 +1623,7 @@ mean_df$CellType = rownames(mean_df)
 
 ```{r}
 
-png ("/omics/groups/OE0436/data/Linh/Output/ST/RCTD/ccRCC_ref/DEA/Volcano.png",width = 700, height = 1000)
+png (".../Output/ST/RCTD/ccRCC_ref/DEA/Volcano.png",width = 700, height = 1000)
 ggplot(data = filtered_merge_all, aes(x = log_fc, y = -log10(p_val), col = diffexpressed, label = delabel)) +
   geom_vline(xintercept = c(-0.5,0.5), col = "gray", linetype = 'dashed') +
   geom_hline(yintercept = -log10(0.0005), col = "gray", linetype = 'dashed') + 
@@ -1672,7 +1672,7 @@ plot_and_save <- function(df, output_path) {
   ggsave(filename = output_path, plot = p)
 }
 
-output_dir = "/omics/groups/OE0436/internal/Linh/Output/ST/All_samples/RCTD/Volcano"
+output_dir = ".../Output/ST/All_samples/RCTD/Volcano"
 lapply(names(up_down_list), function(name) {
   plot_and_save(up_down_list[[name]], paste0(output_dir, "Volcano_", name, ".png"))
 })
